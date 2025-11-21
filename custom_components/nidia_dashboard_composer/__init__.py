@@ -22,13 +22,13 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Register WebSocket API
     async_setup_ws_api(hass)
 
-    # Register frontend panel
-    await hass.http.async_register_static_paths([
-        {
-            "url": f"/{DOMAIN}",
-            "path": hass.config.path(f"custom_components/{DOMAIN}/www"),
-        }
-    ])
+    # Register static files path
+    hass.http.register_static_path(
+        f"/{DOMAIN}",
+        hass.config.path(f"custom_components/{DOMAIN}/www"),
+        cache_headers=False
+    )
+
 
     hass.components.frontend.async_register_built_in_panel(
         component_name="custom",
