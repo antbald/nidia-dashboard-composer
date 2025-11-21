@@ -23,7 +23,7 @@ Nidia Dashboard Composer is a HACS-compatible custom integration that intelligen
 2. Click on "Integrations"
 3. Click the three dots in the top right corner
 4. Select "Custom repositories"
-5. Add `https://github.com/antoniobaldassarre/nidia-dashboard-composer` as an Integration
+5. Add `https://github.com/antbald/nidia-dashboard-composer` as an Integration
 6. Click "Install"
 7. Restart Home Assistant
 
@@ -130,8 +130,8 @@ Built with ❤️ for the Home Assistant community.
 
 ## 📬 Support
 
-- **Issues**: [GitHub Issues](https://github.com/antoniobaldassarre/nidia-dashboard-composer/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/antoniobaldassarre/nidia-dashboard-composer/discussions)
+- **Issues**: [GitHub Issues](https://github.com/antbald/nidia-dashboard-composer/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/antbald/nidia-dashboard-composer/discussions)
 
 ---
 

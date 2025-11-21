@@ -2,13 +2,13 @@
     "domain": "nidia_dashboard_composer",
     "name": "Nidia Dashboard Composer",
     "codeowners": [
-        "@antoniobaldassarre"
+        "@antbald"
     ],
     "config_flow": false,
     "dependencies": [],
-    "documentation": "https://github.com/antoniobaldassarre/nidia-dashboard-composer",
+    "documentation": "https://github.com/antbald/nidia-dashboard-composer",
     "iot_class": "local_push",
-    "issue_tracker": "https://github.com/antoniobaldassarre/nidia-dashboard-composer/issues",
+    "issue_tracker": "https://github.com/antbald/nidia-dashboard-composer/issues",
     "requirements": [],
     "version": "0.1.0"
 }
