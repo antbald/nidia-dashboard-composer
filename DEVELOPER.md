@@ -1,5 +1,20 @@
 # Nidia Dashboard Composer - Developer Guide
 
+## ⚠️ IMPORTANT: Testing Policy
+
+**MANDATORY TESTING BEFORE EVERY COMMIT**
+
+Before pushing ANY changes to GitHub:
+
+1. **Run tests**: `pytest tests/ -v`
+2. **Build frontend** (if changed): `cd frontend && npm run build`
+3. **Verify files exist**: Check `www/nidia-dashboard-composer-panel.js` exists
+4. **Check git status**: Ensure all files are staged (especially www/)
+
+See [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) for complete workflow.
+
+---
+
 ## Project Structure
 
 ```
