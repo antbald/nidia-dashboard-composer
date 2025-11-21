@@ -1,0 +1,46 @@
+{
+    "name": "small_home",
+    "description": "A small apartment with basic entities",
+    "config": {
+        "areas": [
+            "living_room",
+            "bedroom"
+        ],
+        "modules": [
+            "light",
+            "climate"
+        ],
+        "theme": "default",
+        "layout_style": "standard"
+    },
+    "entities": [
+        {
+            "entity_id": "light.living_room_main",
+            "domain": "light",
+            "area_id": "living_room",
+            "friendly_name": "Living Room Main Light",
+            "state": "on"
+        },
+        {
+            "entity_id": "light.living_room_lamp",
+            "domain": "light",
+            "area_id": "living_room",
+            "friendly_name": "Living Room Lamp",
+            "state": "off"
+        },
+        {
+            "entity_id": "light.bedroom_ceiling",
+            "domain": "light",
+            "area_id": "bedroom",
+            "friendly_name": "Bedroom Ceiling Light",
+            "state": "off"
+        },
+        {
+            "entity_id": "climate.living_room",
+            "domain": "climate",
+            "area_id": "living_room",
+            "friendly_name": "Living Room Thermostat",
+            "state": "heat"
+        }
+    ]
+}

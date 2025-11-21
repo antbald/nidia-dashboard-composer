@@ -1,0 +1,38 @@
+{
+    "name": "energy_home",
+    "description": "Home with extensive energy monitoring",
+    "config": {
+        "areas": [
+            "living_room"
+        ],
+        "modules": [
+            "energy",
+            "light"
+        ],
+        "theme": "default",
+        "layout_style": "standard"
+    },
+    "entities": [
+        {
+            "entity_id": "sensor.home_power_consumption",
+            "domain": "sensor",
+            "area_id": "living_room",
+            "friendly_name": "Home Power Consumption",
+            "state": "1500"
+        },
+        {
+            "entity_id": "sensor.solar_pv_production",
+            "domain": "sensor",
+            "area_id": "living_room",
+            "friendly_name": "Solar PV Production",
+            "state": "2500"
+        },
+        {
+            "entity_id": "light.living_room_main",
+            "domain": "light",
+            "area_id": "living_room",
+            "friendly_name": "Living Room Light",
+            "state": "on"
+        }
+    ]
+}

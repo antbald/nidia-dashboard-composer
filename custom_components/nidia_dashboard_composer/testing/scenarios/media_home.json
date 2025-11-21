@@ -1,0 +1,39 @@
+{
+    "name": "media_home",
+    "description": "Home with multiple media players",
+    "config": {
+        "areas": [
+            "living_room",
+            "bedroom"
+        ],
+        "modules": [
+            "media",
+            "light"
+        ],
+        "theme": "default",
+        "layout_style": "standard"
+    },
+    "entities": [
+        {
+            "entity_id": "media_player.living_room_tv",
+            "domain": "media_player",
+            "area_id": "living_room",
+            "friendly_name": "Living Room TV",
+            "state": "playing"
+        },
+        {
+            "entity_id": "media_player.sonos_bedroom",
+            "domain": "media_player",
+            "area_id": "bedroom",
+            "friendly_name": "Bedroom Sonos",
+            "state": "idle"
+        },
+        {
+            "entity_id": "light.living_room",
+            "domain": "light",
+            "area_id": "living_room",
+            "friendly_name": "Living Room Light",
+            "state": "off"
+        }
+    ]
+}
