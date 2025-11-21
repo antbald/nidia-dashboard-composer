@@ -29,6 +29,5 @@ yarn-error.log*
 .coverage
 htmlcov/
 
-# Build outputs
-custom_components/nidia_dashboard_composer/www/
+# Build outputs (keep built www files in repo for HACS)
 frontend/dist/
