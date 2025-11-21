@@ -1,7 +1,7 @@
 """Nidia Dashboard Composer Integration."""
 import logging
+from pathlib import Path
 from homeassistant.core import HomeAssistant
-from homeassistant.components.frontend import async_register_built_in_panel
 
 from .const import DOMAIN, TITLE
 from .coordinator import ComposerCoordinator
@@ -22,14 +22,12 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Register WebSocket API
     async_setup_ws_api(hass)
 
-    # Register static files path
-    hass.http.register_static_path(
-        f"/{DOMAIN}",
-        hass.config.path(f"custom_components/{DOMAIN}/www"),
-        cache_headers=False
-    )
-
-
+    # Register the frontend resource
+    # The panel JavaScript will be served from /hacsfiles path automatically by HACS
+    # or from /local/custom_components path for manual installations
+    module_url = f"/hacsfiles/{DOMAIN}/nidia-dashboard-composer-panel.js"
+    
+    # Register the panel
     hass.components.frontend.async_register_built_in_panel(
         component_name="custom",
         sidebar_title=TITLE,
@@ -38,11 +36,13 @@ async def async_setup(hass: HomeAssistant, config: dict):
         config={
             "_panel_custom": {
                 "name": f"{DOMAIN}-panel",
-                "module_url": f"/{DOMAIN}/nidia-dashboard-composer-panel.js",
+                "module_url": module_url,
             }
         },
         require_admin=False,
     )
+    
+    _LOGGER.info("Nidia Dashboard Composer panel registered with module_url: %s", module_url)
 
     return True
 
