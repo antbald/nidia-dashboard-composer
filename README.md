@@ -87,6 +87,9 @@ The integration includes an internal testing module accessible from the "Test" t
 
 ## 🛠️ Development
 
+> **⚠️ IMPORTANT**: Before committing changes, **ALWAYS run tests**!  
+> See [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) for mandatory testing requirements.
+
 ### Building the Frontend
 
 ```bash
