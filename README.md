@@ -35,11 +35,22 @@ Nidia Dashboard Composer is a HACS-compatible custom integration that intelligen
 
 ### Usage
 
-1. After installation, look for **"Nidia Dashboard Composer"** in your Home Assistant sidebar
-2. Click on it to open the configuration panel
-3. **Configure Tab**: Select which modules you want to include
-4. **Generate Tab**: Click "Generate Dashboard" to create your dashboard
-5. **Test Tab** (for developers): Test with predefined scenarios
+1. **Enable in configuration.yaml**:
+   ```yaml
+   nidia_dashboard_composer:
+   ```
+   
+2. **Restart Home Assistant**
+
+3. After restart, look for **"Nidia Dashboard Composer"** in your Home Assistant sidebar
+
+4. Click on it to open the configuration panel
+
+5. **Configure Tab**: Select which modules you want to include
+
+6. **Generate Tab**: Click "Generate Dashboard" to create your dashboard
+
+7. **Test Tab** (for developers): Test with predefined scenarios
 
 ## 📚 Documentation
 

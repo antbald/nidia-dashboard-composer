@@ -50,6 +50,34 @@
 4. **Verify Installation**
    - Check sidebar for "Nidia Dashboard Composer"
 
+## ⚙️ Configuration
+
+After installing the integration (via HACS or manually), you **MUST** add it to your `configuration.yaml`:
+
+```yaml
+nidia_dashboard_composer:
+```
+
+**Why?** This integration has `config_flow: false` in the manifest, so it cannot be added via the UI. 
+
+1. **Edit configuration.yaml**:
+   - Use the File Editor add-on, or
+   - SSH and edit `/config/configuration.yaml`
+
+2. **Add the entry**:
+   ```yaml
+   # Add this anywhere in the file
+   nidia_dashboard_composer:
+   ```
+
+3. **Restart Home Assistant**:
+   - Settings → System → Restart
+   - Or use the restart button in the UI
+
+4. **Verify**:
+   - After restart, check sidebar for "Nidia Dashboard Composer"
+
+
 ## ✅ Post-Installation
 
 ### Verify the Panel Loaded
