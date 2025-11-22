@@ -3,6 +3,8 @@ import logging
 from pathlib import Path
 from homeassistant.core import HomeAssistant
 
+from homeassistant.components.frontend import async_register_built_in_panel
+
 from .const import DOMAIN, TITLE
 from .coordinator import ComposerCoordinator
 from .api import async_setup_ws_api
@@ -28,7 +30,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
     module_url = f"/hacsfiles/{DOMAIN}/nidia-dashboard-composer-panel.js"
     
     # Register the panel
-    hass.components.frontend.async_register_built_in_panel(
+    async_register_built_in_panel(
+        hass,
         component_name="custom",
         sidebar_title=TITLE,
         sidebar_icon="mdi:view-dashboard-variant",
