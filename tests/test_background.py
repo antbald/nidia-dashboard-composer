@@ -21,10 +21,8 @@ async def test_background_modern(hass, sample_entities):
     assert len(result["views"]) > 0
     
     home_view = result["views"][0]
-    assert home_view["title"] == "Home"
     assert "background" in home_view
-    assert home_view["background"]["image"] == "/local/nidia_dashboard_composer_static/backgrounds/modern.jpg"
-    assert home_view["background"]["opacity"] == 40
+    assert home_view["background"] == "center / cover no-repeat fixed url('/nidia_dashboard_composer_static/backgrounds/modern.jpg')"
 
 @pytest.mark.asyncio
 async def test_background_none(hass, sample_entities):

@@ -12,18 +12,11 @@ BACKGROUNDS = {
     "modern": {
         "name": "Modern",
         "description": "Modern gradient background optimized for smartphone",
-        "config": {
-            "image": "/local/nidia_dashboard_composer_static/backgrounds/modern.jpg",
-            "opacity": 40,
-            "size": "cover",
-            "attachment": "fixed",
-            "alignment": "center",
-            "repeat": "repeat"
-        }
+        "config": "center / cover no-repeat fixed url('/nidia_dashboard_composer_static/backgrounds/modern.jpg')"
     }
 }
 
-def get_background_config(background_name: str) -> dict | None:
+def get_background_config(background_name: str) -> str | None:
     """
     Get background configuration for a given background name.
     

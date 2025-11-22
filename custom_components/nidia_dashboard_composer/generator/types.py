@@ -30,7 +30,7 @@ class ModuleResult:
     view_title: str | None = None
     view_type: str | None = None  # 'sections' or None for default
     sections: List[dict] | None = None  # For sections-type views
-    background: dict | None = None  # Background configuration
+    background: str | None = None  # Background configuration
 
 
 class LovelaceCard(TypedDict):
