@@ -73,7 +73,6 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
             "main_shadow": False,
             "icon_shadow": False
         },
-        "icon": "mdi:sofa",
         "styles": "styles: |\n  .bubble-line {\n    background: white; !important\n    opacity: 0.1;\n  }\n"
     }
     
