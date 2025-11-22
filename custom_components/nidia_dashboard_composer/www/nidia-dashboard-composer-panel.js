@@ -663,7 +663,7 @@ let _ = class extends k {
     t > -1 ? this._config.modules.splice(t, 1) : this._config.modules.push(r), this._config = { ...this._config };
   }
   render() {
-    return m`
+    return console.log("NidiaDashboardComposerPanel: render called"), m`
       <div class="header">
         <h1>🎨 Nidia Dashboard Composer</h1>
       </div>

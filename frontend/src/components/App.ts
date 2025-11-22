@@ -226,6 +226,7 @@ export class NidiaDashboardComposerPanel extends LitElement {
   }
 
   render() {
+    console.log('NidiaDashboardComposerPanel: render called');
     return html`
       <div class="header">
         <h1>🎨 Nidia Dashboard Composer</h1>
