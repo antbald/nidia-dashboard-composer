@@ -39,7 +39,7 @@ def find_room_temperature_sensor(room: Room) -> EntityInfo | None:
     return None
 
 def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
-    """Generate cards for a single room."""
+    """Generate cards for a single room with 2-column layout using horizontal-stack."""
     cards: List[LovelaceCard] = []
     
     lights = get_room_lights(room)
@@ -47,16 +47,12 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
     climates = get_room_climates(room)
     temp_sensor = find_room_temperature_sensor(room)
     
-    # 1. SEPARATOR
-    # Determine entity for separator
+    # 1. SEPARATOR (full-width title for the room)
     separator_entity = ""
     if climates:
         separator_entity = climates[0]["entity_id"]
     elif lights:
         separator_entity = lights[0]["entity_id"]
-    # If no climate or lights, maybe covers? Or just leave empty if strictly following rules?
-    # Rule: "se non esiste climate, usa una entità rappresentativa della stanza (es. la prima light della stanza)"
-    # If absolutely nothing, we might have an issue, but let's assume there's something or handle gracefully.
     elif covers:
         separator_entity = covers[0]["entity_id"]
     
@@ -88,68 +84,51 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         
     cards.append(cast(LovelaceCard, separator_card))
     
-    # 2. COVER - Full width but compact for smartphone
+    # 2. CLIMATE + COVER in horizontal-stack if both exist, otherwise separate
+    climate_cover_entities = []
+    
     if covers:
-        # Rule: "prendi la prima cover.*"
-        cover_entity = covers[0]["entity_id"]
-        cover_card = {
+        climate_cover_entities.append({
             "type": "custom:mushroom-cover-card",
-            "entity": cover_entity,
-            "visibility": [
-                {
-                    "condition": "state",
-                    "entity": "input_boolean.dashboard_filter_cover",
-                    "state": "on"
-                }
-            ],
-            "grid_options": {
-                "columns": 12,  # Full width for controls
-                "rows": 1
-            },
+            "entity": covers[0]["entity_id"],
             "fill_container": True,
             "layout": "horizontal",
             "show_position_control": False,
             "show_buttons_control": True,
-            "hold_action": {
-                "action": "more-info"
-            }
-        }
-        cards.append(cast(LovelaceCard, cover_card))
-        
-    # 3. CLIMATE - Two columns for smartphone (6 cols each = 2 per row)
+            "hold_action": {"action": "more-info"}
+        })
+    
     for climate in climates:
-        climate_card = {
+        climate_cover_entities.append({
             "type": "custom:mushroom-climate-card",
             "entity": climate["entity_id"],
-            "grid_options": {
-                "columns": 6,  # 2 columns layout on smartphone
-                "rows": 2
-            },
             "fill_container": False,
             "show_temperature_control": True,
             "collapsible_controls": True,
             "icon": "mdi:home-thermometer-outline",
-            "hold_action": {
-                "action": "more-info"
-            },
-            "tap_action": {
-                "action": "toggle"
-            }
-        }
-        cards.append(cast(LovelaceCard, climate_card))
-        
-    # 4. LIGHTS - Two columns for smartphone (6 cols each = 2 per row)
+            "hold_action": {"action": "more-info"},
+            "tap_action": {"action": "toggle"}
+        })
+    
+    # Add climate/cover in pairs using horizontal-stack
+    for i in range(0, len(climate_cover_entities), 2):
+        if i + 1 < len(climate_cover_entities):
+            # Pair of 2
+            cards.append(cast(LovelaceCard, {
+                "type": "horizontal-stack",
+                "cards": [climate_cover_entities[i], climate_cover_entities[i + 1]]
+            }))
+        else:
+            # Single card
+            cards.append(cast(LovelaceCard, climate_cover_entities[i]))
+    
+    # 3. LIGHTS in horizontal-stack pairs (2 columns)
+    light_cards = []
     for light in lights:
-        light_card = {
+        light_cards.append({
             "type": "custom:mushroom-entity-card",
             "entity": light["entity_id"],
-            "grid_options": {
-                "columns": 6,  # 2 columns layout on smartphone
-                "rows": 1
-            },
-            "tap_action": {
-                "action": "toggle"
-            },
+            "tap_action": {"action": "toggle"},
             "icon_color": "orange",
             "primary_info": "name",
             "secondary_info": "none",
@@ -158,8 +137,19 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
                     "mushroom-entity-card$": "/* Colori di base (OFF) */\n:host {\n  --primary-text-color: white;\n  --secondary-text-color: white;\n}\n/* Quando la luce è ACCESA, testo nero */\n:host([data-state=\"on\"]) {\n  --primary-text-color: black !important;\n  --secondary-text-color: black !important;\n}\n"
                 }
             }
-        }
-        cards.append(cast(LovelaceCard, light_card))
+        })
+    
+    # Group lights in pairs
+    for i in range(0, len(light_cards), 2):
+        if i + 1 < len(light_cards):
+            # Pair of 2 lights
+            cards.append(cast(LovelaceCard, {
+                "type": "horizontal-stack",
+                "cards": [light_cards[i], light_cards[i + 1]]
+            }))
+        else:
+            # Single light (odd number)
+            cards.append(cast(LovelaceCard, light_cards[i]))
         
     return cards
 
