@@ -62,13 +62,6 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         "entity": separator_entity,
         "button_type": "switch",
         "name": room["name"],
-        "modules": ["frosted_glass", "!default"],
-        "frosted_glass": {
-            "icon_background": "light",
-            "border": "vision",
-            "main_shadow": False,
-            "icon_shadow": False
-        },
         "styles": "styles: |\n  .bubble-line {\n    background: white; !important\n    opacity: 0.1;\n  }\n"
     }
     
