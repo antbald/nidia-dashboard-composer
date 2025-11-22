@@ -25,6 +25,17 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Register WebSocket API
     async_setup_ws_api(hass)
 
+    # Read version from manifest.json for cache busting
+    import json
+    manifest_path = Path(__file__).parent / "manifest.json"
+    try:
+        with open(manifest_path) as f:
+            manifest = json.load(f)
+            version = manifest.get("version", "0.0.0")
+    except Exception as e:
+        _LOGGER.warning("Failed to read version from manifest: %s", e)
+        version = "0.0.0"
+    
     # Determine the correct module URL
     # 1. Check if HACS has installed the file in www/community
     hacs_path = hass.config.path(f"www/community/{DOMAIN}/nidia-dashboard-composer-panel.js")
@@ -34,7 +45,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     
     if os.path.exists(hacs_path):
         # Use the standard /local path which maps to /config/www
-        module_url = f"/local/community/{DOMAIN}/nidia-dashboard-composer-panel.js"
+        module_url = f"/local/community/{DOMAIN}/nidia-dashboard-composer-panel.js?v={version}"
         _LOGGER.info("Found frontend file in HACS path: %s", hacs_path)
     elif os.path.exists(dev_path):
         # Register a custom static path for development/manual install
@@ -48,11 +59,11 @@ async def async_setup(hass: HomeAssistant, config: dict):
                 cache_headers=False
             )
         ])
-        module_url = f"/{DOMAIN}_static/nidia-dashboard-composer-panel.js"
+        module_url = f"/{DOMAIN}_static/nidia-dashboard-composer-panel.js?v={version}"
         _LOGGER.info("Found frontend file in dev path, registered static url: %s", module_url)
     else:
         # Fallback to HACS proxy path if file not found (might be cached or not yet copied)
-        module_url = f"/hacsfiles/{DOMAIN}/nidia-dashboard-composer-panel.js"
+        module_url = f"/hacsfiles/{DOMAIN}/nidia-dashboard-composer-panel.js?v={version}"
         _LOGGER.warning("Frontend file not found in expected locations, falling back to: %s", module_url)
     
     # Register the panel
