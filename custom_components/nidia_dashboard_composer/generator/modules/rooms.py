@@ -14,6 +14,9 @@ def generate_branding_card() -> LovelaceCard:
     return cast(LovelaceCard, {
         "type": "picture",
         "image": "/nidia_dashboard_composer_static/logos/black.png",
+        "tap_action": {
+            "action": "none"
+        },
         "card_mod": {
             "style": """
                 ha-card {
@@ -43,6 +46,7 @@ def generate_branding_card() -> LovelaceCard:
             """
         }
     })
+
 
 
 def get_room_lights(room: Room) -> List[EntityInfo]:
