@@ -22,7 +22,7 @@ async def test_background_modern(hass, sample_entities):
     
     home_view = result["views"][0]
     assert "background" in home_view
-    assert home_view["background"] == "center / cover no-repeat fixed url('/nidia_dashboard_composer_static/backgrounds/modern.jpg')"
+    assert home_view["background"] == "center / cover no-repeat fixed linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), center / cover no-repeat fixed url('/nidia_dashboard_composer_static/backgrounds/modern.jpg')"
 
 @pytest.mark.asyncio
 async def test_background_none(hass, sample_entities):
