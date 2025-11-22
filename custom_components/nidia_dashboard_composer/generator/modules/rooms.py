@@ -9,6 +9,42 @@ class Room(TypedDict):
     name: str
     entities: List[EntityInfo]
 
+def generate_branding_card() -> LovelaceCard:
+    """Generate the branding logo card that adapts to theme."""
+    return cast(LovelaceCard, {
+        "type": "picture",
+        "image": "/nidia_dashboard_composer_static/logos/black.png",
+        "card_mod": {
+            "style": """
+                ha-card {
+                    background: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                    border-radius: 0 !important;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 40px;
+                    padding: 0 !important;
+                    margin: 0 0 16px 0 !important;
+                }
+                ha-card img {
+                    height: 20px !important;
+                    width: auto !important;
+                    content: url("/nidia_dashboard_composer_static/logos/black.png");
+                    display: block;
+                    margin: 0 auto;
+                }
+                @media (prefers-color-scheme: dark) {
+                    ha-card img {
+                        content: url("/nidia_dashboard_composer_static/logos/white.png");
+                    }
+                }
+            """
+        }
+    })
+
+
 def get_room_lights(room: Room) -> List[EntityInfo]:
     """Get lights for a room."""
     return [e for e in room["entities"] if e["domain"] == "light"]
@@ -129,6 +165,10 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
 def generate_lighting_module_for_all_rooms(rooms: List[Room]) -> List[LovelaceCard]:
     """Generate cards for all rooms."""
     all_cards: List[LovelaceCard] = []
+    
+    # Add branding card at the top
+    all_cards.append(generate_branding_card())
+    
     for room in rooms:
         all_cards.extend(generate_lighting_module_for_room(room))
     return all_cards
