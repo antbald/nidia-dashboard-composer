@@ -64,7 +64,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         frontend_url_path=DOMAIN,
         config={
             "_panel_custom": {
-                "name": f"{DOMAIN}-panel",
+                "name": "nidia-dashboard-composer-panel",
                 "module_url": module_url,
             }
         },
