@@ -189,14 +189,23 @@ export class NidiaDashboardComposerPanel extends LitElement {
     this._loading = false;
   }
 
+  @state() private _saveStatus: 'idle' | 'saving' | 'saved' | 'error' = 'idle';
+
   private async _saveConfig() {
-    this._loading = true;
+    this._saveStatus = 'saving';
     try {
       await saveConfig(this.hass, this._config);
+      this._saveStatus = 'saved';
+      setTimeout(() => {
+        this._saveStatus = 'idle';
+      }, 2000);
     } catch (err) {
       console.error('Failed to save config:', err);
+      this._saveStatus = 'error';
+      setTimeout(() => {
+        this._saveStatus = 'idle';
+      }, 3000);
     }
-    this._loading = false;
   }
 
   private async _generate() {
@@ -266,8 +275,15 @@ export class NidiaDashboardComposerPanel extends LitElement {
       </div>
 
       <div class="button-group">
-        <button class="button-primary" @click="${this._saveConfig}">
-          Save Configuration
+        <button 
+          class="button-primary" 
+          @click="${this._saveConfig}"
+          ?disabled="${this._saveStatus === 'saving'}"
+        >
+          ${this._saveStatus === 'saving' ? 'Saving...' :
+        this._saveStatus === 'saved' ? 'Saved! ✅' :
+          this._saveStatus === 'error' ? 'Error ❌' :
+            'Save Configuration'}
         </button>
       </div>
     `;
