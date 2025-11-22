@@ -4,6 +4,7 @@ from typing import List, Any
 from ..types import ModuleResult, EntityInfo
 from .rooms import generate_lighting_module_for_all_rooms, Room
 from ..layouts import smartphone as layout
+from ..backgrounds import get_background_config
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +47,10 @@ class RoomsModule:
         # Generate cards
         cards = generate_lighting_module_for_all_rooms(rooms_list)
         
+        # Get background configuration
+        background_name = config.get("background", "none")
+        background_config = get_background_config(background_name)
+        
         # Return as sections-type view (smartphone layout)
         return ModuleResult(
             cards=[],  # Empty for sections view
@@ -54,5 +59,6 @@ class RoomsModule:
             sections=[{
                 "type": layout.SECTION_TYPE,
                 "cards": cards
-            }]
+            }],
+            background=background_config
         )

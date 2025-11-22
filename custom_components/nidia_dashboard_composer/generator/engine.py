@@ -55,11 +55,15 @@ class DashboardGenerator:
             
             if result.view_type == "sections" and result.sections:
                 # Sections-type view
-                views.append({
+                view_data = {
                     "type": "sections",
                     "title": result.view_title or module_name.title(),
                     "sections": result.sections
-                })
+                }
+                #Apply background if configured
+                if result.background:
+                    view_data["background"] = result.background
+                views.append(view_data)
             elif result.cards:
                 # Traditional card-based view
                 views.append({

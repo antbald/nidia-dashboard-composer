@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit';
+import { LitElement, html, css, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, ComposerConfig } from '../types';
 import { getConfig, saveConfig, generateDashboard } from '../api';
@@ -193,9 +193,14 @@ export class NidiaDashboardComposerPanel extends LitElement {
     super();
   }
 
-  async connectedCallback() {
-    super.connectedCallback();
-    await this._loadConfig();
+  private _configLoaded = false;
+
+  protected updated(changedProps: PropertyValues) {
+    super.updated(changedProps);
+    if (!this._configLoaded && this.hass) {
+      this._configLoaded = true;
+      this._loadConfig();
+    }
   }
 
   private async _loadConfig() {
@@ -231,6 +236,12 @@ export class NidiaDashboardComposerPanel extends LitElement {
         this._saveStatus = 'idle';
       }, 3000);
     }
+  }
+
+  private _onBackgroundChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    const value = select.value;
+    this._config = { ...this._config, background: value || undefined };
   }
 
   private async _generate() {
@@ -301,6 +312,17 @@ export class NidiaDashboardComposerPanel extends LitElement {
             </p>
           `}
         </div>
+<div class="card">
+  <div class="card-header">
+    <h2 class="card-title">Background Settings</h2>
+    <div>
+      <select @change="${(e: any) => this._onBackgroundChange(e)}" .value="${this._config.background || ''}">
+        <option value="">None</option>
+        <option value="modern">Modern</option>
+      </select>
+    </div>
+  </div>
+</div>
 
         ${this._generatedDashboard ? html`
           <div class="card">

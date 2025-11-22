@@ -35,6 +35,7 @@ export interface ComposerConfig {
     modules: string[];
     theme: string;
     layout_style?: string;
+    background?: string; // added for background selection
 }
 
 export interface TestScenarioResult {
