@@ -12,6 +12,14 @@ export interface HomeAssistant {
     panels: any;
     panelUrl: string;
     states: { [entity_id: string]: HassEntity };
+    areas: { [area_id: string]: HassArea };
+}
+
+export interface HassArea {
+    area_id: string;
+    name: string;
+    picture: string | null;
+    aliases: string[];
 }
 
 export interface HassEntity {

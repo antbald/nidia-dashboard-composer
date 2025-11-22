@@ -1,16 +1,7 @@
-"""Generator modules."""
-from .light import LightModule
-from .climate import ClimateModule
-from .media import MediaModule
-from .energy import EnergyModule
 from .rooms_module import RoomsModule
 
 AVAILABLE_MODULES = {
     "home": RoomsModule,
-    "light": LightModule,
-    "climate": ClimateModule,
-    "media": MediaModule,
-    "energy": EnergyModule,
 }
 
-__all__ = ["AVAILABLE_MODULES", "LightModule", "ClimateModule", "MediaModule", "EnergyModule", "RoomsModule"]
+__all__ = ["AVAILABLE_MODULES", "RoomsModule"]

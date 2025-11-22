@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, ComposerConfig } from '../types';
-import { getConfig, saveConfig, generateDashboard, runTestScenario } from '../api';
+import { getConfig, saveConfig, generateDashboard } from '../api';
 
 @customElement('nidia-dashboard-composer-panel')
 export class NidiaDashboardComposerPanel extends LitElement {
@@ -15,7 +15,6 @@ export class NidiaDashboardComposerPanel extends LitElement {
     layout_style: 'standard'
   };
 
-  @state() private _currentStep = 0;
   @state() private _loading = false;
   @state() private _generatedDashboard: any = null;
 
@@ -24,155 +23,175 @@ export class NidiaDashboardComposerPanel extends LitElement {
       display: block;
       height: 100%;
       width: 100%;
-      background: var(--primary-background-color);
-      overflow: auto;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
+      background-color: var(--primary-background-color);
       color: var(--primary-text-color);
+      overflow-y: auto;
+      font-family: var(--paper-font-body1_-_font-family);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 32px 16px;
     }
 
     .header {
-      margin-bottom: 24px;
+      text-align: center;
+      margin-bottom: 48px;
     }
 
-    /* ... other styles ... */
-    
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      border-bottom: 2px solid var(--divider-color);
-    }
-
-    .tab {
-      padding: 12px 24px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--secondary-text-color);
-      font-size: 14px;
-      font-weight: 500;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      transition: all 0.2s;
-    }
-
-    .tab:hover {
+    .header h1 {
+      font-size: 36px;
+      font-weight: 300;
+      margin: 0 0 8px 0;
       color: var(--primary-text-color);
     }
 
-    .tab.active {
-      color: var(--primary-color);
-      border-bottom-color: var(--primary-color);
+    .header p {
+      font-size: 16px;
+      color: var(--secondary-text-color);
+      margin: 0;
     }
 
-    .content {
-      background: var(--card-background-color);
-      border-radius: 8px;
+    .card {
+      background: var(--ha-card-background, var(--card-background-color, #fff));
+      border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: var(--ha-card-box-shadow, 0 2px 8px rgba(0,0,0,0.1));
+      margin-bottom: 24px;
+      border: 1px solid var(--divider-color, #e0e0e0);
     }
 
-    .section {
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 24px;
     }
 
-    .section h2 {
+    .card-title {
       font-size: 20px;
       font-weight: 500;
-      margin: 0 0 16px 0;
-      color: var(--primary-text-color);
+      margin: 0;
     }
 
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--primary-text-color);
-      font-weight: 500;
-    }
-
-    .checkbox-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px;
-      border-radius: 4px;
-      transition: background 0.2s;
-    }
-
-    .checkbox-item:hover {
-      background: var(--secondary-background-color);
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-    }
-
-    .button-group {
-      display: flex;
+    .area-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
       gap: 12px;
-      margin-top: 24px;
     }
 
-    button {
-      padding: 12px 24px;
-      border-radius: 4px;
-      border: none;
-      font-size: 14px;
-      font-weight: 500;
+    .area-card {
+      background: var(--secondary-background-color);
+      border-radius: 8px;
+      padding: 12px;
       cursor: pointer;
       transition: all 0.2s;
+      border: 2px solid transparent;
+      text-align: center;
     }
 
-    .button-primary {
+    .area-card:hover {
       background: var(--primary-color);
       color: white;
     }
 
-    .button-primary:hover {
-      opacity: 0.9;
+    .area-card.selected {
+      border-color: var(--primary-color);
+      background: var(--primary-color);
+      color: white;
     }
 
-    .button-secondary {
+    .area-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .area-name {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+      margin-top: 32px;
+      position: sticky;
+      bottom: 32px;
+      background: var(--primary-background-color);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+
+    button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-secondary {
       background: var(--secondary-background-color);
       color: var(--primary-text-color);
     }
 
-    .button-secondary:hover {
-      background: var(--divider-color);
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .code-block {
+    .btn-primary:hover {
+      filter: brightness(1.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .code-preview {
       background: #1e1e1e;
       color: #d4d4d4;
       padding: 16px;
-      border-radius: 4px;
+      border-radius: 8px;
       overflow: auto;
-      font-family: 'Courier New', monospace;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
       font-size: 12px;
-      max-height: 500px;
+      line-height: 1.5;
+      max-height: 600px;
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--secondary-text-color);
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
     }
+    
+    .status-saved { background: #e8f5e9; color: #2e7d32; }
+    .status-error { background: #ffebee; color: #c62828; }
   `;
+
+  constructor() {
+    super();
+  }
 
   async connectedCallback() {
     super.connectedCallback();
@@ -183,6 +202,10 @@ export class NidiaDashboardComposerPanel extends LitElement {
     this._loading = true;
     try {
       this._config = await getConfig(this.hass);
+      // Ensure 'home' is always in modules
+      if (!this._config.modules.includes('home')) {
+        this._config.modules = ['home'];
+      }
     } catch (err) {
       console.error('Failed to load config:', err);
     }
@@ -194,6 +217,8 @@ export class NidiaDashboardComposerPanel extends LitElement {
   private async _saveConfig() {
     this._saveStatus = 'saving';
     try {
+      // Force 'home' module
+      this._config.modules = ['home'];
       await saveConfig(this.hass, this._config);
       this._saveStatus = 'saved';
       setTimeout(() => {
@@ -218,132 +243,91 @@ export class NidiaDashboardComposerPanel extends LitElement {
     this._loading = false;
   }
 
-  private _toggleModule(module: string) {
-    const index = this._config.modules.indexOf(module);
+  private _toggleArea(areaId: string) {
+    const index = this._config.areas.indexOf(areaId);
     if (index > -1) {
-      this._config.modules.splice(index, 1);
+      this._config.areas.splice(index, 1);
     } else {
-      this._config.modules.push(module);
+      this._config.areas.push(areaId);
     }
     this._config = { ...this._config };
   }
 
+  private _selectAllAreas() {
+    if (!this.hass.areas) return;
+    this._config.areas = Object.keys(this.hass.areas);
+    this._config = { ...this._config };
+  }
+
+  private _deselectAllAreas() {
+    this._config.areas = [];
+    this._config = { ...this._config };
+  }
+
   render() {
-    return html`
-      <div class="header">
-        <h1>🎨 Nidia Dashboard Composer</h1>
-      </div>
-
-      <div class="tabs">
-        <button class="tab ${this._currentStep === 0 ? 'active' : ''}" @click="${() => this._currentStep = 0}">
-          Configure
-        </button>
-        <button class="tab ${this._currentStep === 1 ? 'active' : ''}" @click="${() => this._currentStep = 1}">
-          Generate
-        </button>
-        <button class="tab ${this._currentStep === 2 ? 'active' : ''}" @click="${() => this._currentStep = 2}">
-          Test
-        </button>
-      </div>
-
-      <div class="content">
-        ${this._currentStep === 0 ? this._renderConfigStep() : ''}
-        ${this._currentStep === 1 ? this._renderGenerateStep() : ''}
-        ${this._currentStep === 2 ? this._renderTestStep() : ''}
-      </div>
-    `;
-  }
-
-  private _renderConfigStep() {
-    const availableModules = ['home', 'light', 'climate', 'media', 'energy'];
+    const areas = this.hass?.areas ? Object.values(this.hass.areas) : [];
 
     return html`
-      <div class="section">
-        <h2>Select Modules</h2>
-        <div class="checkbox-list">
-          ${availableModules.map(module => html`
-            <label class="checkbox-item">
-              <input
-                type="checkbox"
-                .checked="${this._config.modules.includes(module)}"
-                @change="${() => this._toggleModule(module)}"
-              />
-              <span>${module.charAt(0).toUpperCase() + module.slice(1)}</span>
-            </label>
-          `)}
+      <div class="container">
+        <div class="header">
+          <h1>Nidia Dashboard Composer</h1>
+          <p>Create your perfect Home Assistant dashboard in seconds.</p>
         </div>
-      </div>
 
-      <div class="button-group">
-        <button 
-          class="button-primary" 
-          @click="${this._saveConfig}"
-          ?disabled="${this._saveStatus === 'saving'}"
-        >
-          ${this._saveStatus === 'saving' ? 'Saving...' :
-        this._saveStatus === 'saved' ? 'Saved! ✅' :
-          this._saveStatus === 'error' ? 'Error ❌' :
-            'Save Configuration'}
-        </button>
-      </div>
-    `;
-  }
-
-  private _renderGenerateStep() {
-    return html`
-      <div class="section">
-        <h2>Generate Dashboard</h2>
-        <p>Click the button below to generate a dashboard based on your configuration.</p>
-        
-        <div class="button-group">
-          <button class="button-primary" @click="${this._generate}" ?disabled="${this._loading}">
-            ${this._loading ? 'Generating...' : 'Generate Dashboard'}
-          </button>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Select Areas</h2>
+            <div>
+              <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" @click="${this._selectAllAreas}">All</button>
+              <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" @click="${this._deselectAllAreas}">None</button>
+            </div>
+          </div>
+          
+          ${areas.length > 0 ? html`
+            <div class="area-grid">
+              ${areas.map(area => html`
+                <div 
+                  class="area-card ${this._config.areas.includes(area.area_id) ? 'selected' : ''}"
+                  @click="${() => this._toggleArea(area.area_id)}"
+                >
+                  <span class="area-icon">🏠</span>
+                  <div class="area-name">${area.name}</div>
+                </div>
+              `)}
+            </div>
+          ` : html`
+            <p style="text-align: center; color: var(--secondary-text-color);">
+              No areas found in Home Assistant. Please configure areas first.
+            </p>
+          `}
         </div>
 
         ${this._generatedDashboard ? html`
-          <div style="margin-top: 24px;">
-            <h2>Generated Dashboard</h2>
-            <pre class="code-block">${JSON.stringify(this._generatedDashboard, null, 2)}</pre>
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Generated Dashboard</h2>
+              <button class="btn-secondary" @click="${() => { navigator.clipboard.writeText(JSON.stringify(this._generatedDashboard, null, 2)); }}">
+                Copy JSON
+              </button>
+            </div>
+            <pre class="code-preview">${JSON.stringify(this._generatedDashboard, null, 2)}</pre>
           </div>
         ` : ''}
-      </div>
-    `;
-  }
 
-  private _renderTestStep() {
-    return html`
-      <div class="section">
-        <h2>Developer Testing</h2>
-        <p>Test the generator with predefined scenarios.</p>
-        
-        <div class="button-group">
-          <button class="button-primary" @click="${() => this._runTest('small_home')}">
-            Test: Small Home
-          </button>
-          <button class="button-primary" @click="${() => this._runTest('energy_home')}">
-            Test: Energy Home
+        <div class="actions">
+          <button 
+            class="btn-primary" 
+            @click="${async () => { await this._saveConfig(); await this._generate(); }}"
+            ?disabled="${this._saveStatus === 'saving' || this._loading}"
+          >
+            ${this._saveStatus === 'saving' ? 'Saving...' :
+        this._loading ? 'Generating...' :
+          this._saveStatus === 'saved' ? 'Saved & Generated!' :
+            'Save & Generate Dashboard'}
           </button>
         </div>
-
-        ${this._generatedDashboard ? html`
-          <div style="margin-top: 24px;">
-            <h2>Test Result</h2>
-            <pre class="code-block">${JSON.stringify(this._generatedDashboard, null, 2)}</pre>
-          </div>
-        ` : ''}
       </div>
     `;
-  }
-
-  private async _runTest(scenario: string) {
-    this._loading = true;
-    try {
-      this._generatedDashboard = await runTestScenario(this.hass, scenario);
-    } catch (err) {
-      console.error('Failed to run test:', err);
-    }
-    this._loading = false;
   }
 }
 
