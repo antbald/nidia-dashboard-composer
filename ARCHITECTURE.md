@@ -80,3 +80,37 @@ nidia-dashboard-composer/
 ├── hacs.json
 └── README.md
 ```
+
+## 7. Layout System
+Located in `custom_components/nidia_dashboard_composer/generator/layouts/`.
+
+### Current Layouts
+- **smartphone.py**: Optimized for smartphone screens
+  - View type: `sections`
+  - Section type: `grid`
+  - Auto 2-column layout for lights
+  - Climate: 6 cols (2 per row)
+  - Cover: 12 cols (full-width)
+  - Lights: no grid_options (auto-arranged by grid)
+
+### Layout Structure
+Each layout file defines:
+- `LAYOUT_NAME`: Identifier for the layout
+- `VIEW_TYPE`: Type of Lovelace view (`sections`, `panel`, etc.)
+- `SECTION_TYPE`: Type of section (`grid`, etc.)
+- `*_GRID_OPTIONS`: Grid configuration for each entity type
+- Documentation of layout behavior and constraints
+
+### Adding New Layouts
+To add a tablet or desktop layout:
+1. Create `layouts/tablet.py` or `layouts/desktop.py`
+2. Define layout-specific constants (e.g., 3-4 column grid)
+3. Update `layouts/__init__.py` to export the new layout
+4. Modify room module to accept a layout parameter
+5. Update frontend to allow layout selection
+
+### Why Separate Layouts?
+- **Maintainability**: Clear separation between device-specific configs
+- **Flexibility**: Easy to add new layouts without touching core logic
+- **Documentation**: Each layout documents its own behavior
+- **Future-proof**: Prepared for responsive design or user-selectable layouts

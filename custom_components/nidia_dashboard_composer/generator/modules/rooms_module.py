@@ -3,6 +3,7 @@ import logging
 from typing import List, Any
 from ..types import ModuleResult, EntityInfo
 from .rooms import generate_lighting_module_for_all_rooms, Room
+from ..layouts import smartphone as layout
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,13 +46,13 @@ class RoomsModule:
         # Generate cards
         cards = generate_lighting_module_for_all_rooms(rooms_list)
         
-        # Return as sections-type view
+        # Return as sections-type view (smartphone layout)
         return ModuleResult(
             cards=[],  # Empty for sections view
             view_title="Home",
-            view_type="sections",
+            view_type=layout.VIEW_TYPE,
             sections=[{
-                "type": "grid",
+                "type": layout.SECTION_TYPE,
                 "cards": cards
             }]
         )

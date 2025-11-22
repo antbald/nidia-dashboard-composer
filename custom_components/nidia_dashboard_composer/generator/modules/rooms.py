@@ -1,6 +1,7 @@
 """Room generation module."""
 from typing import TypedDict, List, Any, cast
 from ..types import EntityInfo, LovelaceCard
+from ..layouts import smartphone as layout
 
 class Room(TypedDict):
     """Room definition."""
@@ -82,6 +83,7 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         cover_card: dict[str, Any] = {
             "type": "custom:mushroom-cover-card",
             "entity": covers[0]["entity_id"],
+            "grid_options": layout.COVER_GRID_OPTIONS,
             "layout": "horizontal",
             "fill_container": True,
             "show_buttons_control": True,
@@ -89,15 +91,12 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         }
         cards.append(cast(LovelaceCard, cover_card))
     
-    # 3. CLIMATE (2 columns each - 6/12)
+    # 3. CLIMATE (2 columns - managed by layout)
     for climate in climates:
         climate_card: dict[str, Any] = {
             "type": "custom:mushroom-climate-card",
             "entity": climate["entity_id"],
-            "grid_options": {
-                "columns": 6,
-                "rows": 2
-            },
+            "grid_options": layout.CLIMATE_GRID_OPTIONS,
             "fill_container": False,
             "show_temperature_control": True,
             "collapsible_controls": True,
