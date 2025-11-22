@@ -51,7 +51,7 @@ class DashboardGenerator:
             module_class = AVAILABLE_MODULES[module_name]
             module_ents = module_entities.get(module_name, [])
             
-            result = module_class.generate(module_ents, config)
+            result = module_class.generate(module_ents, config, all_entities=entities)
             
             if result.cards:
                 views.append({
@@ -97,7 +97,9 @@ class DashboardGenerator:
                 "domain": entity.domain,
                 "area_id": entity.area_id,
                 "friendly_name": state.attributes.get("friendly_name", entity.entity_id),
-                "state": state.state
+                "state": state.state,
+                "attributes": dict(state.attributes),
+                "device_class": state.attributes.get("device_class") or entity.device_class
             })
         
         return entities

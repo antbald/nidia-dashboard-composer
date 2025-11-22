@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nidia Dashboard Composer Preview</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            font-family: Roboto, sans-serif;
+            --primary-color: #03a9f4;
+            --primary-text-color: #212121;
+            --secondary-text-color: #757575;
+            --primary-background-color: #ffffff;
+            --secondary-background-color: #f5f5f5;
+            --divider-color: #e0e0e0;
+            --card-background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- The Custom Panel Component -->
+    <nidia-dashboard-composer-panel id="panel"></nidia-dashboard-composer-panel>
+
+    <script type="module">
+        // Import the compiled module directly
+        import './custom_components/nidia_dashboard_composer/www/nidia-dashboard-composer-panel.js';
+
+        // Mock Home Assistant object (hass)
+        const mockHass = {
+            // Mock WebSocket calls
+            callWS: async (msg) => {
+                console.log('[MockHass] callWS:', msg);
+
+                // Mock config response
+                if (msg.type === 'nidia_dashboard_composer/config/get') {
+                    return {
+                        areas: ['Living Room', 'Kitchen', 'Bedroom'],
+                        modules: ['home', 'light', 'climate'],
+                        theme: 'default',
+                        layout_style: 'standard'
+                    };
+                }
+
+                // Mock generate response
+                if (msg.type === 'nidia_dashboard_composer/generate') {
+                    return {
+                        title: "Generated Dashboard",
+                        views: [{ title: "Home", cards: [] }]
+                    };
+                }
+
+                return {};
+            },
+            // Mock other properties needed by Lit or HA helpers
+            connection: {
+                subscribeMessage: () => Promise.resolve(() => { })
+            },
+            themes: {
+                darkMode: false
+            }
+        };
+
+        // Initialize the panel once defined
+        customElements.whenDefined('nidia-dashboard-composer-panel').then(() => {
+            const panel = document.getElementById('panel');
+            // Pass the mock hass object to the component
+            panel.hass = mockHass;
+            // Simulate narrow mode (mobile) or wide (desktop)
+            panel.narrow = false;
+            console.log('Panel initialized with mock hass');
+        });
+    </script>
+</body>
+
+</html>

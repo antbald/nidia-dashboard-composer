@@ -10,7 +10,7 @@ class LightModule:
     """Generator for light cards."""
     
     @staticmethod
-    def generate(entities: List[EntityInfo], config: dict) -> ModuleResult:
+    def generate(entities: List[EntityInfo], config: dict, **kwargs) -> ModuleResult:
         """Generate light cards from entities."""
         _LOGGER.debug("Generating light module with %d entities", len(entities))
         

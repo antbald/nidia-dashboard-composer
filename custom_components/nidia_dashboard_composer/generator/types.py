@@ -18,6 +18,8 @@ class EntityInfo(TypedDict):
     area_id: str | None
     friendly_name: str
     state: str
+    attributes: dict[str, Any]
+    device_class: str | None
 
 
 @dataclass

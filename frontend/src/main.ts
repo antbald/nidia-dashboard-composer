@@ -1,4 +1,3 @@
-console.log('Nidia Dashboard Composer: Module script executing...');
 import './components/App';
 
 // Register the panel

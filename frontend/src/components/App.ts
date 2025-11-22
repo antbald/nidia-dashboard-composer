@@ -22,24 +22,24 @@ export class NidiaDashboardComposerPanel extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 16px;
-      background: var(--primary-background-color, #fff);
-      min-height: 100vh;
-      border: 5px solid red; /* DEBUG BORDER */
-      color: var(--primary-text-color, #000);
+      height: 100%;
+      width: 100%;
+      background: var(--primary-background-color);
+      overflow: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      color: var(--primary-text-color);
     }
 
     .header {
       margin-bottom: 24px;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 32px;
-      font-weight: 400;
-      color: var(--primary-text-color);
-    }
-
+    /* ... other styles ... */
+    
     .tabs {
       display: flex;
       gap: 8px;
@@ -174,14 +174,8 @@ export class NidiaDashboardComposerPanel extends LitElement {
     }
   `;
 
-  constructor() {
-    super();
-    console.log('NidiaDashboardComposerPanel: Constructor called');
-  }
-
   async connectedCallback() {
     super.connectedCallback();
-    console.log('NidiaDashboardComposerPanel: connectedCallback called');
     await this._loadConfig();
   }
 
@@ -226,7 +220,6 @@ export class NidiaDashboardComposerPanel extends LitElement {
   }
 
   render() {
-    console.log('NidiaDashboardComposerPanel: render called');
     return html`
       <div class="header">
         <h1>🎨 Nidia Dashboard Composer</h1>
@@ -253,7 +246,7 @@ export class NidiaDashboardComposerPanel extends LitElement {
   }
 
   private _renderConfigStep() {
-    const availableModules = ['light', 'climate', 'media', 'energy'];
+    const availableModules = ['home', 'light', 'climate', 'media', 'energy'];
 
     return html`
       <div class="section">

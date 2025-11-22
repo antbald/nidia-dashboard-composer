@@ -10,7 +10,7 @@ class MediaModule:
     """Generator for media player cards."""
     
     @staticmethod
-    def generate(entities: List[EntityInfo], config: dict) -> ModuleResult:
+    def generate(entities: List[EntityInfo], config: dict, **kwargs) -> ModuleResult:
         """Generate media cards from entities."""
         _LOGGER.debug("Generating media module with %d entities", len(entities))
         

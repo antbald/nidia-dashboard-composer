@@ -10,7 +10,7 @@ class ClimateModule:
     """Generator for climate cards."""
     
     @staticmethod
-    def generate(entities: List[EntityInfo], config: dict) -> ModuleResult:
+    def generate(entities: List[EntityInfo], config: dict, **kwargs) -> ModuleResult:
         """Generate climate cards from entities."""
         _LOGGER.debug("Generating climate module with %d entities", len(entities))
         
