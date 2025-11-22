@@ -53,7 +53,15 @@ class DashboardGenerator:
             
             result = module_class.generate(module_ents, config, all_entities=entities)
             
-            if result.cards:
+            if result.view_type == "sections" and result.sections:
+                # Sections-type view
+                views.append({
+                    "type": "sections",
+                    "title": result.view_title or module_name.title(),
+                    "sections": result.sections
+                })
+            elif result.cards:
+                # Traditional card-based view
                 views.append({
                     "title": result.view_title or module_name.title(),
                     "cards": result.cards

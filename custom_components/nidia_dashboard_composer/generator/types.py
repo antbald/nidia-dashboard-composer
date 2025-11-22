@@ -27,6 +27,8 @@ class ModuleResult:
     """Result from a module generator."""
     cards: List[dict]
     view_title: str | None = None
+    view_type: str | None = None  # 'sections' or None for default
+    sections: List[dict] | None = None  # For sections-type views
 
 
 class LovelaceCard(TypedDict):

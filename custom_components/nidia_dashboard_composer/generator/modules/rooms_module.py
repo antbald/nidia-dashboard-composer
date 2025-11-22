@@ -45,4 +45,13 @@ class RoomsModule:
         # Generate cards
         cards = generate_lighting_module_for_all_rooms(rooms_list)
         
-        return ModuleResult(cards=cards, view_title="Home")
+        # Return as sections-type view
+        return ModuleResult(
+            cards=[],  # Empty for sections view
+            view_title="Home",
+            view_type="sections",
+            sections=[{
+                "type": "grid",
+                "cards": cards
+            }]
+        )

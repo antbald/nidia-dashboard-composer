@@ -107,15 +107,11 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         }
         cards.append(cast(LovelaceCard, climate_card))
     
-    # 4. LIGHTS (2 columns each - 6/12)
+    # 4. LIGHTS (no grid_options - grid container handles layout)
     for light in lights:
         light_card: dict[str, Any] = {
             "type": "custom:mushroom-entity-card",
             "entity": light["entity_id"],
-            "grid_options": {
-                "columns": 6,
-                "rows": 1
-            },
             "tap_action": {"action": "toggle"},
             "icon_color": "orange",
             "primary_info": "name",
