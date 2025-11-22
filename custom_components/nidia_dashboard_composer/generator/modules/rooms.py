@@ -89,7 +89,7 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         
     cards.append(cast(LovelaceCard, separator_card))
     
-    # 2. COVER
+    # 2. COVER - Full width but compact for smartphone
     if covers:
         # Rule: "prendi la prima cover.*"
         cover_entity = covers[0]["entity_id"]
@@ -104,7 +104,7 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
                 }
             ],
             "grid_options": {
-                "columns": "full",
+                "columns": 12,  # Full width for controls
                 "rows": 1
             },
             "fill_container": True,
@@ -117,13 +117,13 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         }
         cards.append(cast(LovelaceCard, cover_card))
         
-    # 3. CLIMATE
+    # 3. CLIMATE - Two columns for smartphone (6 cols each = 2 per row)
     for climate in climates:
         climate_card = {
             "type": "custom:mushroom-climate-card",
             "entity": climate["entity_id"],
             "grid_options": {
-                "columns": 6,
+                "columns": 6,  # 2 columns layout on smartphone
                 "rows": 2
             },
             "fill_container": False,
@@ -139,11 +139,15 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         }
         cards.append(cast(LovelaceCard, climate_card))
         
-    # 4. LIGHTS
+    # 4. LIGHTS - Two columns for smartphone (6 cols each = 2 per row)
     for light in lights:
         light_card = {
             "type": "custom:mushroom-entity-card",
             "entity": light["entity_id"],
+            "grid_options": {
+                "columns": 6,  # 2 columns layout on smartphone
+                "rows": 1
+            },
             "tap_action": {
                 "action": "toggle"
             },
