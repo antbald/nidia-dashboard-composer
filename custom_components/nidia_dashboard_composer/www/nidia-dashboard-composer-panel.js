@@ -3,7 +3,7 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const D = globalThis, V = D.ShadowRoot && (D.ShadyCSS === void 0 || D.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, q = Symbol(), K = /* @__PURE__ */ new WeakMap();
+const H = globalThis, V = H.ShadowRoot && (H.ShadyCSS === void 0 || H.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, q = Symbol(), K = /* @__PURE__ */ new WeakMap();
 let at = class {
   constructor(t, e, s) {
     if (this._$cssResult$ = !0, s !== q) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
@@ -32,7 +32,7 @@ const pt = (r) => new at(typeof r == "string" ? r : r + "", void 0, q), ut = (r,
 }, _t = (r, t) => {
   if (V) r.adoptedStyleSheets = t.map((e) => e instanceof CSSStyleSheet ? e : e.styleSheet);
   else for (const e of t) {
-    const s = document.createElement("style"), i = D.litNonce;
+    const s = document.createElement("style"), i = H.litNonce;
     i !== void 0 && s.setAttribute("nonce", i), s.textContent = e.cssText, r.appendChild(s);
   }
 }, Z = V ? (r) => r : (r) => r instanceof CSSStyleSheet ? ((t) => {
@@ -45,7 +45,7 @@ const pt = (r) => new at(typeof r == "string" ? r : r + "", void 0, q), ut = (r,
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const { is: gt, defineProperty: $t, getOwnPropertyDescriptor: ft, getOwnPropertyNames: bt, getOwnPropertySymbols: mt, getPrototypeOf: yt } = Object, f = globalThis, Q = f.trustedTypes, vt = Q ? Q.emptyScript : "", L = f.reactiveElementPolyfillSupport, P = (r, t) => r, R = { toAttribute(r, t) {
+const { is: gt, defineProperty: $t, getOwnPropertyDescriptor: ft, getOwnPropertyNames: bt, getOwnPropertySymbols: mt, getPrototypeOf: yt } = Object, f = globalThis, Q = f.trustedTypes, vt = Q ? Q.emptyScript : "", I = f.reactiveElementPolyfillSupport, P = (r, t) => r, R = { toAttribute(r, t) {
   switch (t) {
     case Boolean:
       r = r ? vt : null;
@@ -278,14 +278,14 @@ let x = class extends HTMLElement {
   firstUpdated(t) {
   }
 };
-x.elementStyles = [], x.shadowRootOptions = { mode: "open" }, x[P("elementProperties")] = /* @__PURE__ */ new Map(), x[P("finalized")] = /* @__PURE__ */ new Map(), L == null || L({ ReactiveElement: x }), (f.reactiveElementVersions ?? (f.reactiveElementVersions = [])).push("2.1.1");
+x.elementStyles = [], x.shadowRootOptions = { mode: "open" }, x[P("elementProperties")] = /* @__PURE__ */ new Map(), x[P("finalized")] = /* @__PURE__ */ new Map(), I == null || I({ ReactiveElement: x }), (f.reactiveElementVersions ?? (f.reactiveElementVersions = [])).push("2.1.1");
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const T = globalThis, z = T.trustedTypes, tt = z ? z.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, ht = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, ct = "?" + $, At = `<${ct}>`, A = document, O = () => A.createComment(""), U = (r) => r === null || typeof r != "object" && typeof r != "function", J = Array.isArray, St = (r) => J(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", W = `[ 	
-\f\r]`, C = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, et = /-->/g, st = />/g, b = RegExp(`>|${W}(?:([^\\s"'>=/]+)(${W}*=${W}*(?:[^ 	
+const T = globalThis, z = T.trustedTypes, tt = z ? z.createPolicy("lit-html", { createHTML: (r) => r }) : void 0, ht = "$lit$", $ = `lit$${Math.random().toFixed(9).slice(2)}$`, ct = "?" + $, At = `<${ct}>`, A = document, O = () => A.createComment(""), U = (r) => r === null || typeof r != "object" && typeof r != "function", J = Array.isArray, St = (r) => J(r) || typeof (r == null ? void 0 : r[Symbol.iterator]) == "function", L = `[ 	
+\f\r]`, C = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, et = /-->/g, st = />/g, b = RegExp(`>|${L}(?:([^\\s"'>=/]+)(${L}*=${L}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), it = /'/g, rt = /"/g, lt = /^(?:script|style|textarea|title)$/i, xt = (r) => (t, ...e) => ({ _$litType$: r, strings: t, values: e }), m = xt(1), E = Symbol.for("lit-noChange"), d = Symbol.for("lit-nothing"), ot = /* @__PURE__ */ new WeakMap(), y = A.createTreeWalker(A, 129);
 function dt(r, t) {
   if (!J(r) || !r.hasOwnProperty("raw")) throw Error("invalid template strings array");
@@ -303,21 +303,21 @@ const Et = (r, t) => {
   }
   return [dt(r, n + (r[e] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), s];
 };
-class M {
+class N {
   constructor({ strings: t, _$litType$: e }, s) {
     let i;
     this.parts = [];
     let n = 0, o = 0;
     const h = t.length - 1, a = this.parts, [l, p] = Et(t, e);
-    if (this.el = M.createElement(l, s), y.currentNode = this.el.content, e === 2 || e === 3) {
+    if (this.el = N.createElement(l, s), y.currentNode = this.el.content, e === 2 || e === 3) {
       const c = this.el.content.firstChild;
       c.replaceWith(...c.childNodes);
     }
     for (; (i = y.nextNode()) !== null && a.length < h; ) {
       if (i.nodeType === 1) {
         if (i.hasAttributes()) for (const c of i.getAttributeNames()) if (c.endsWith(ht)) {
-          const u = p[o++], g = i.getAttribute(c).split($), H = /([.?@])?(.*)/.exec(u);
-          a.push({ type: 1, index: n, name: H[2], strings: g, ctor: H[1] === "." ? Ct : H[1] === "?" ? Pt : H[1] === "@" ? Tt : j }), i.removeAttribute(c);
+          const u = p[o++], g = i.getAttribute(c).split($), D = /([.?@])?(.*)/.exec(u);
+          a.push({ type: 1, index: n, name: D[2], strings: g, ctor: D[1] === "." ? Ct : D[1] === "?" ? Pt : D[1] === "@" ? Tt : j }), i.removeAttribute(c);
         } else c.startsWith($) && (a.push({ type: 6, index: n }), i.removeAttribute(c));
         if (lt.test(i.tagName)) {
           const c = i.textContent.split($), u = c.length - 1;
@@ -364,7 +364,7 @@ class wt {
     for (; a !== void 0; ) {
       if (o === a.index) {
         let l;
-        a.type === 2 ? l = new N(n, n.nextSibling, this, t) : a.type === 1 ? l = new a.ctor(n, a.name, a.strings, this, t) : a.type === 6 && (l = new kt(n, this, t)), this._$AV.push(l), a = s[++h];
+        a.type === 2 ? l = new M(n, n.nextSibling, this, t) : a.type === 1 ? l = new a.ctor(n, a.name, a.strings, this, t) : a.type === 6 && (l = new kt(n, this, t)), this._$AV.push(l), a = s[++h];
       }
       o !== (a == null ? void 0 : a.index) && (n = y.nextNode(), o++);
     }
@@ -375,7 +375,7 @@ class wt {
     for (const s of this._$AV) s !== void 0 && (s.strings !== void 0 ? (s._$AI(t, s, e), e += s.strings.length - 2) : s._$AI(t[e])), e++;
   }
 }
-class N {
+class M {
   get _$AU() {
     var t;
     return ((t = this._$AM) == null ? void 0 : t._$AU) ?? this._$Cv;
@@ -408,7 +408,7 @@ class N {
   }
   $(t) {
     var n;
-    const { values: e, _$litType$: s } = t, i = typeof s == "number" ? this._$AC(t) : (s.el === void 0 && (s.el = M.createElement(dt(s.h, s.h[0]), this.options)), s);
+    const { values: e, _$litType$: s } = t, i = typeof s == "number" ? this._$AC(t) : (s.el === void 0 && (s.el = N.createElement(dt(s.h, s.h[0]), this.options)), s);
     if (((n = this._$AH) == null ? void 0 : n._$AD) === i) this._$AH.p(e);
     else {
       const o = new wt(i, this), h = o.u(this.options);
@@ -417,13 +417,13 @@ class N {
   }
   _$AC(t) {
     let e = ot.get(t.strings);
-    return e === void 0 && ot.set(t.strings, e = new M(t)), e;
+    return e === void 0 && ot.set(t.strings, e = new N(t)), e;
   }
   k(t) {
     J(this._$AH) || (this._$AH = [], this._$AR());
     const e = this._$AH;
     let s, i = 0;
-    for (const n of t) i === e.length ? e.push(s = new N(this.O(O()), this.O(O()), this, this.options)) : s = e[i], s._$AI(n), i++;
+    for (const n of t) i === e.length ? e.push(s = new M(this.O(O()), this.O(O()), this, this.options)) : s = e[i], s._$AI(n), i++;
     i < e.length && (this._$AR(s && s._$AB.nextSibling, i), e.length = i);
   }
   _$AR(t = this._$AA.nextSibling, e) {
@@ -504,14 +504,14 @@ class kt {
     w(this, t);
   }
 }
-const B = T.litHtmlPolyfillSupport;
-B == null || B(M, N), (T.litHtmlVersions ?? (T.litHtmlVersions = [])).push("3.3.1");
+const W = T.litHtmlPolyfillSupport;
+W == null || W(N, M), (T.litHtmlVersions ?? (T.litHtmlVersions = [])).push("3.3.1");
 const Ot = (r, t, e) => {
   const s = (e == null ? void 0 : e.renderBefore) ?? t;
   let i = s._$litPart$;
   if (i === void 0) {
     const n = (e == null ? void 0 : e.renderBefore) ?? null;
-    s._$litPart$ = i = new N(t.insertBefore(O(), n), n, void 0, e ?? {});
+    s._$litPart$ = i = new M(t.insertBefore(O(), n), n, void 0, e ?? {});
   }
   return i._$AI(r), i;
 };
@@ -566,7 +566,7 @@ const Ut = (r) => (t, e) => {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const Mt = { attribute: !0, type: String, converter: R, reflect: !1, hasChanged: F }, Nt = (r = Mt, t, e) => {
+const Nt = { attribute: !0, type: String, converter: R, reflect: !1, hasChanged: F }, Mt = (r = Nt, t, e) => {
   const { kind: s, metadata: i } = e;
   let n = globalThis.litPropertyMetadata.get(i);
   if (n === void 0 && globalThis.litPropertyMetadata.set(i, n = /* @__PURE__ */ new Map()), s === "setter" && ((r = Object.create(r)).wrapped = !0), n.set(e.name, r), s === "accessor") {
@@ -588,7 +588,7 @@ const Mt = { attribute: !0, type: String, converter: R, reflect: !1, hasChanged:
   throw Error("Unsupported decorator location: " + s);
 };
 function Y(r) {
-  return (t, e) => typeof e == "object" ? Nt(r, t, e) : ((s, i, n) => {
+  return (t, e) => typeof e == "object" ? Mt(r, t, e) : ((s, i, n) => {
     const o = i.hasOwnProperty(n);
     return i.constructor.createProperty(n, s), o ? Object.getOwnPropertyDescriptor(i, n) : void 0;
   })(r, t, e);
@@ -598,38 +598,38 @@ function Y(r) {
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-function I(r) {
+function B(r) {
   return Y({ ...r, state: !0, attribute: !1 });
 }
-const Ht = "nidia_dashboard_composer/get_config", Dt = "nidia_dashboard_composer/save_config", Rt = "nidia_dashboard_composer/generate", zt = "nidia_dashboard_composer/test_run";
+const Dt = "nidia_dashboard_composer/get_config", Ht = "nidia_dashboard_composer/save_config", Rt = "nidia_dashboard_composer/generate", zt = "nidia_dashboard_composer/test_run";
 async function jt(r) {
-  return r.callWS({ type: Ht });
+  return r.callWS({ type: Dt });
 }
-async function It(r, t) {
-  await r.callWS({ type: Dt, config: t });
+async function Bt(r, t) {
+  await r.callWS({ type: Ht, config: t });
 }
-async function Lt(r) {
+async function It(r) {
   return r.callWS({ type: Rt });
 }
-async function Wt(r, t) {
+async function Lt(r, t) {
   return r.callWS({ type: zt, scenario: t });
 }
-var Bt = Object.defineProperty, Gt = Object.getOwnPropertyDescriptor, S = (r, t, e, s) => {
+var Wt = Object.defineProperty, Gt = Object.getOwnPropertyDescriptor, S = (r, t, e, s) => {
   for (var i = s > 1 ? void 0 : s ? Gt(t, e) : t, n = r.length - 1, o; n >= 0; n--)
     (o = r[n]) && (i = (s ? o(t, e, i) : o(i)) || i);
-  return s && i && Bt(t, e, i), i;
+  return s && i && Wt(t, e, i), i;
 };
 let _ = class extends k {
   constructor() {
-    super(...arguments), this.narrow = !1, this._config = {
+    super(), this.narrow = !1, this._config = {
       areas: [],
       modules: [],
       theme: "default",
       layout_style: "standard"
-    }, this._currentStep = 0, this._loading = !1, this._generatedDashboard = null;
+    }, this._currentStep = 0, this._loading = !1, this._generatedDashboard = null, console.log("NidiaDashboardComposerPanel: Constructor called");
   }
   async connectedCallback() {
-    super.connectedCallback(), await this._loadConfig();
+    super.connectedCallback(), console.log("NidiaDashboardComposerPanel: connectedCallback called"), await this._loadConfig();
   }
   async _loadConfig() {
     this._loading = !0;
@@ -643,7 +643,7 @@ let _ = class extends k {
   async _saveConfig() {
     this._loading = !0;
     try {
-      await It(this.hass, this._config);
+      await Bt(this.hass, this._config);
     } catch (r) {
       console.error("Failed to save config:", r);
     }
@@ -652,7 +652,7 @@ let _ = class extends k {
   async _generate() {
     this._loading = !0;
     try {
-      this._generatedDashboard = await Lt(this.hass);
+      this._generatedDashboard = await It(this.hass);
     } catch (r) {
       console.error("Failed to generate dashboard:", r);
     }
@@ -760,7 +760,7 @@ let _ = class extends k {
   async _runTest(r) {
     this._loading = !0;
     try {
-      this._generatedDashboard = await Wt(this.hass, r);
+      this._generatedDashboard = await Lt(this.hass, r);
     } catch (t) {
       console.error("Failed to run test:", t);
     }
@@ -771,8 +771,10 @@ _.styles = ut`
     :host {
       display: block;
       padding: 16px;
-      background: var(--primary-background-color);
+      background: var(--primary-background-color, #fff);
       min-height: 100vh;
+      border: 5px solid red; /* DEBUG BORDER */
+      color: var(--primary-text-color, #000);
     }
 
     .header {
@@ -926,20 +928,21 @@ S([
   Y({ type: Boolean })
 ], _.prototype, "narrow", 2);
 S([
-  I()
+  B()
 ], _.prototype, "_config", 2);
 S([
-  I()
+  B()
 ], _.prototype, "_currentStep", 2);
 S([
-  I()
+  B()
 ], _.prototype, "_loading", 2);
 S([
-  I()
+  B()
 ], _.prototype, "_generatedDashboard", 2);
 _ = S([
   Ut("nidia-dashboard-composer-panel")
 ], _);
+console.log("Nidia Dashboard Composer: Module script executing...");
 customElements.whenDefined("nidia-dashboard-composer-panel").then(() => {
   console.log("Nidia Dashboard Composer panel loaded");
 });

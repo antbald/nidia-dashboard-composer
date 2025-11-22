@@ -5,26 +5,28 @@ import { getConfig, saveConfig, generateDashboard, runTestScenario } from '../ap
 
 @customElement('nidia-dashboard-composer-panel')
 export class NidiaDashboardComposerPanel extends LitElement {
-    @property({ attribute: false }) hass!: HomeAssistant;
-    @property({ type: Boolean }) narrow = false;
+  @property({ attribute: false }) hass!: HomeAssistant;
+  @property({ type: Boolean }) narrow = false;
 
-    @state() private _config: ComposerConfig = {
-        areas: [],
-        modules: [],
-        theme: 'default',
-        layout_style: 'standard'
-    };
+  @state() private _config: ComposerConfig = {
+    areas: [],
+    modules: [],
+    theme: 'default',
+    layout_style: 'standard'
+  };
 
-    @state() private _currentStep = 0;
-    @state() private _loading = false;
-    @state() private _generatedDashboard: any = null;
+  @state() private _currentStep = 0;
+  @state() private _loading = false;
+  @state() private _generatedDashboard: any = null;
 
-    static styles = css`
+  static styles = css`
     :host {
       display: block;
       padding: 16px;
-      background: var(--primary-background-color);
+      background: var(--primary-background-color, #fff);
       min-height: 100vh;
+      border: 5px solid red; /* DEBUG BORDER */
+      color: var(--primary-text-color, #000);
     }
 
     .header {
@@ -172,53 +174,59 @@ export class NidiaDashboardComposerPanel extends LitElement {
     }
   `;
 
-    async connectedCallback() {
-        super.connectedCallback();
-        await this._loadConfig();
-    }
+  constructor() {
+    super();
+    console.log('NidiaDashboardComposerPanel: Constructor called');
+  }
 
-    private async _loadConfig() {
-        this._loading = true;
-        try {
-            this._config = await getConfig(this.hass);
-        } catch (err) {
-            console.error('Failed to load config:', err);
-        }
-        this._loading = false;
-    }
+  async connectedCallback() {
+    super.connectedCallback();
+    console.log('NidiaDashboardComposerPanel: connectedCallback called');
+    await this._loadConfig();
+  }
 
-    private async _saveConfig() {
-        this._loading = true;
-        try {
-            await saveConfig(this.hass, this._config);
-        } catch (err) {
-            console.error('Failed to save config:', err);
-        }
-        this._loading = false;
+  private async _loadConfig() {
+    this._loading = true;
+    try {
+      this._config = await getConfig(this.hass);
+    } catch (err) {
+      console.error('Failed to load config:', err);
     }
+    this._loading = false;
+  }
 
-    private async _generate() {
-        this._loading = true;
-        try {
-            this._generatedDashboard = await generateDashboard(this.hass);
-        } catch (err) {
-            console.error('Failed to generate dashboard:', err);
-        }
-        this._loading = false;
+  private async _saveConfig() {
+    this._loading = true;
+    try {
+      await saveConfig(this.hass, this._config);
+    } catch (err) {
+      console.error('Failed to save config:', err);
     }
+    this._loading = false;
+  }
 
-    private _toggleModule(module: string) {
-        const index = this._config.modules.indexOf(module);
-        if (index > -1) {
-            this._config.modules.splice(index, 1);
-        } else {
-            this._config.modules.push(module);
-        }
-        this._config = { ...this._config };
+  private async _generate() {
+    this._loading = true;
+    try {
+      this._generatedDashboard = await generateDashboard(this.hass);
+    } catch (err) {
+      console.error('Failed to generate dashboard:', err);
     }
+    this._loading = false;
+  }
 
-    render() {
-        return html`
+  private _toggleModule(module: string) {
+    const index = this._config.modules.indexOf(module);
+    if (index > -1) {
+      this._config.modules.splice(index, 1);
+    } else {
+      this._config.modules.push(module);
+    }
+    this._config = { ...this._config };
+  }
+
+  render() {
+    return html`
       <div class="header">
         <h1>🎨 Nidia Dashboard Composer</h1>
       </div>
@@ -241,12 +249,12 @@ export class NidiaDashboardComposerPanel extends LitElement {
         ${this._currentStep === 2 ? this._renderTestStep() : ''}
       </div>
     `;
-    }
+  }
 
-    private _renderConfigStep() {
-        const availableModules = ['light', 'climate', 'media', 'energy'];
+  private _renderConfigStep() {
+    const availableModules = ['light', 'climate', 'media', 'energy'];
 
-        return html`
+    return html`
       <div class="section">
         <h2>Select Modules</h2>
         <div class="checkbox-list">
@@ -269,10 +277,10 @@ export class NidiaDashboardComposerPanel extends LitElement {
         </button>
       </div>
     `;
-    }
+  }
 
-    private _renderGenerateStep() {
-        return html`
+  private _renderGenerateStep() {
+    return html`
       <div class="section">
         <h2>Generate Dashboard</h2>
         <p>Click the button below to generate a dashboard based on your configuration.</p>
@@ -291,10 +299,10 @@ export class NidiaDashboardComposerPanel extends LitElement {
         ` : ''}
       </div>
     `;
-    }
+  }
 
-    private _renderTestStep() {
-        return html`
+  private _renderTestStep() {
+    return html`
       <div class="section">
         <h2>Developer Testing</h2>
         <p>Test the generator with predefined scenarios.</p>
@@ -316,21 +324,21 @@ export class NidiaDashboardComposerPanel extends LitElement {
         ` : ''}
       </div>
     `;
-    }
+  }
 
-    private async _runTest(scenario: string) {
-        this._loading = true;
-        try {
-            this._generatedDashboard = await runTestScenario(this.hass, scenario);
-        } catch (err) {
-            console.error('Failed to run test:', err);
-        }
-        this._loading = false;
+  private async _runTest(scenario: string) {
+    this._loading = true;
+    try {
+      this._generatedDashboard = await runTestScenario(this.hass, scenario);
+    } catch (err) {
+      console.error('Failed to run test:', err);
     }
+    this._loading = false;
+  }
 }
 
 declare global {
-    interface HTMLElementTagNameMap {
-        'nidia-dashboard-composer-panel': NidiaDashboardComposerPanel;
-    }
+  interface HTMLElementTagNameMap {
+    'nidia-dashboard-composer-panel': NidiaDashboardComposerPanel;
+  }
 }
