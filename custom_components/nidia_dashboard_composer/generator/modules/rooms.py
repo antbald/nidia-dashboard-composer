@@ -63,6 +63,7 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         "entity": separator_entity,
         "button_type": "switch",
         "name": room["name"],
+        "icon": " ",  # Empty space to hide icon
         "styles": "styles: |\n  .bubble-line {\n    background: white; !important\n    opacity: 0.1;\n  }\n"
     }
     
