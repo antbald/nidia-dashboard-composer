@@ -1,5 +1,71 @@
 # Release Notes
 
+## Version 0.6.0 - Enhanced Diagnostics (2025-12-16)
+
+### 🔍 Diagnostic & Debugging Features
+
+This release focuses on improving troubleshooting capabilities when the dashboard doesn't generate properly.
+
+#### Enhanced Logging
+- **Comprehensive Entity Discovery Logging**: Track entity discovery with detailed statistics
+  - Areas available vs selected
+  - Total entities examined, filtered, and without state
+  - Distribution by domain and area
+- **Module Mapping Insights**: See exactly which entities go to which modules
+  - Enabled modules list
+  - Domain to module mapping
+  - Unmapped domains detection
+- **View Generation Tracking**: Monitor the view creation process
+  - Module results (type, title, sections, cards)
+  - View type (sections vs traditional)
+  - Final view count
+
+#### RoomsModule Diagnostics
+- **Parameter Tracking**: Log entities received via both parameters
+- **Area Grouping Details**: See how entities are grouped into rooms
+  - Number of areas identified
+  - Entities without area assignment
+  - Room list with entity counts
+- **Card Generation Stats**: Track cards generated per room and total
+
+#### Debug Tools
+- **`debug_config.py`**: Automated configuration verification script
+  - Checks storage file validity
+  - Verifies module "home" is enabled
+  - Lists available areas in Home Assistant
+  - Shows entity distribution by area and domain
+  - Identifies entities without area assignment
+- **`DEBUG_GUIDE.md`**: Comprehensive troubleshooting guide
+  - All logging points documented
+  - Step-by-step diagnostic procedures
+  - Critical log messages to search for
+  - Common problems and solutions
+- **`ANALYSIS_SUMMARY.md`**: Technical analysis summary
+
+#### User Experience Improvements
+- **Better Error Messages**: When no rooms are found, display helpful message with:
+  - Possible causes
+  - Debug information (entity count, area filter)
+  - Clear instructions to resolve
+
+### 🐛 Bug Fixes
+- Improved detection of entities without area assignment
+- Better handling of empty configuration scenarios
+
+### 📚 Documentation
+- Added comprehensive debug documentation
+- Technical notes on RoomsModule architecture
+- Troubleshooting flowcharts and procedures
+
+### 🎯 Use Cases
+This release is perfect for:
+- New installations where rooms don't appear
+- Troubleshooting configuration issues
+- Understanding entity-to-module mapping
+- Verifying area assignments
+
+---
+
 ## Version 0.1.0 - Initial Release (2025-11-21)
 
 ### 🎉 First Public Release
