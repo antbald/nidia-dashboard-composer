@@ -111,52 +111,84 @@ class DashboardGenerator:
         all_areas = {area.id: area.name for area in area_reg.areas.values()}
         _LOGGER.debug("Available areas in HA: %s", all_areas)
         
-        # Create normalized name → area_id mapping for fuzzy matching
-        area_name_to_id = {}
+        # Create comprehensive mapping for fuzzy matching
+        # This maps BOTH the normalized version AND the original ID to the area_id
+        area_lookup = {}
         for area in area_reg.areas.values():
-            # Normalize: lowercase, remove spaces and special chars
+            area_id = area.id
+            # Map exact ID
+            area_lookup[area_id] = area_id
+            # Map normalized ID (lowercase, no spaces/underscores/hyphens)
+            normalized_id = area_id.lower().replace(" ", "").replace("_", "").replace("-", "")
+            area_lookup[normalized_id] = area_id
+            # Map normalized name
             normalized_name = area.name.lower().replace(" ", "").replace("_", "").replace("-", "")
-            area_name_to_id[normalized_name] = area.id
-            # Also map the exact ID
-            area_name_to_id[area.id] = area.id
+            area_lookup[normalized_name] = area_id
+            
+        _LOGGER.debug("Area lookup mapping: %s", area_lookup)
         
-        # Smart area resolution: if selected_areas contains IDs that don't exist,
-        # try to match them by normalized name
+        # Smart area resolution
         resolved_areas = []
         area_auto_corrections = {}
         
         if selected_areas:
             for configured_area in selected_areas:
-                # Try exact match first
+                # Try exact match first (fastest)
                 if configured_area in all_areas:
                     resolved_areas.append(configured_area)
-                else:
-                    # Try normalized fuzzy match
-                    normalized_config = configured_area.lower().replace(" ", "").replace("_", "").replace("-", "")
-                    if normalized_config in area_name_to_id:
-                        matched_id = area_name_to_id[normalized_config]
-                        resolved_areas.append(matched_id)
+                    _LOGGER.debug("✅ Area ID exact match: '%s'", configured_area)
+                elif configured_area in area_lookup:
+                    # Found via lookup (exact or normalized)
+                    matched_id = area_lookup[configured_area]
+                    resolved_areas.append(matched_id)
+                    if matched_id != configured_area:
                         area_auto_corrections[configured_area] = matched_id
                         _LOGGER.warning(
                             "⚠️  Area ID auto-corrected: '%s' → '%s' (name: '%s')",
                             configured_area, matched_id, all_areas.get(matched_id, "Unknown")
                         )
                     else:
+                        _LOGGER.debug("✅ Area ID matched via lookup: '%s'", configured_area)
+                else:
+                    # Try normalized fuzzy match as last resort
+                    normalized_config = configured_area.lower().replace(" ", "").replace("_", "").replace("-", "")
+                    if normalized_config in area_lookup:
+                        matched_id = area_lookup[normalized_config]
+                        resolved_areas.append(matched_id)
+                        area_auto_corrections[configured_area] = matched_id
                         _LOGGER.warning(
-                            "❌ Area ID '%s' not found in system and couldn't be auto-matched. Skipping.",
-                            configured_area
+                            "⚠️  Area ID auto-corrected via normalization: '%s' → '%s' (name: '%s')",
+                            configured_area, matched_id, all_areas.get(matched_id, "Unknown")
+                        )
+                    else:
+                        _LOGGER.error(
+                            "❌ Area ID '%s' not found in system and couldn't be matched. "
+                            "Normalized: '%s'. Skipping this area.",
+                            configured_area, normalized_config
                         )
             
-            # If we made auto-corrections, suggest updating the config
+            # Log auto-corrections
             if area_auto_corrections:
                 _LOGGER.warning(
                     "💡 TIP: Update your configuration to use the correct area IDs: %s",
                     list(area_auto_corrections.values())
                 )
             
-            # Use resolved areas for filtering
-            selected_areas = resolved_areas if resolved_areas else selected_areas
-            _LOGGER.info("Resolved area filter: %s", selected_areas)
+            # Use resolved areas
+            selected_areas = resolved_areas
+            
+            if not selected_areas:
+                _LOGGER.error(
+                    "🚨 CRITICAL: No areas could be resolved! All configured areas were invalid."
+                )
+                _LOGGER.error("Configured areas: %s", config.get("areas", []))
+                _LOGGER.error("Available area IDs in system: %s", list(all_areas.keys()))
+                _LOGGER.error("Available area names in system: %s", list(all_areas.values()))
+                _LOGGER.error(
+                    "💡 TIP: Use \"areas\": [] to include ALL areas without filtering."
+                )
+            else:
+                _LOGGER.info("✅ Resolved %d area(s): %s", len(selected_areas), selected_areas)
         
         entities = []
         total_entities = len(ent_reg.entities)

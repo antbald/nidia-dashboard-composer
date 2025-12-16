@@ -1,5 +1,60 @@
 # Release Notes
 
+## Version 0.6.2 - Critical Bugfix (2025-12-16)
+
+### 🚨 CRITICAL BUGFIX: Area Matching Logic
+
+This release fixes a critical bug in v0.6.1 where area IDs with underscores (e.g., `camera_da_letto`) would not match correctly, resulting in 0 entities discovered and empty dashboards.
+
+#### 🐛 Bug Description
+**Problem in v0.6.1:**
+- System had area IDs like: `camera_da_letto`, `vano_tecnico`
+- User configured same IDs: `["camera_da_letto", "vano_tecnico"]`
+- Result: ❌ **0 entities found, dashboard empty**
+
+**Root Cause:**
+The lookup dictionary only mapped normalized versions (without underscores), missing exact ID matches. When an exact match failed, the fuzzy match tried to find the normalized version which also failed.
+
+#### ✅ Solution in v0.6.2
+**Comprehensive Multi-Level Lookup:**
+Now creates a 3-level mapping for each area:
+1. **Exact ID** → area_id (e.g., `camera_da_letto` → `camera_da_letto`)
+2. **Normalized ID** → area_id (e.g., `cameradaletto` → `camera_da_letto`)
+3. **Normalized Name** → area_id (e.g., `cameradaletto` from "Camera da letto" → `camera_da_letto`)
+
+This ensures ALL variations match correctly.
+
+#### 📊 Validation
+```
+✅ 'camera_da_letto' → match (exact)
+✅ 'cameradaletto' → match (normalized ID)
+✅ 'Camera da Letto' → match (normalized name)
+✅ 'vano_tecnico' → match (exact)
+✅ 'vanotecnico' → match (normalized ID)
+```
+
+#### 🔍 Enhanced Logging
+New detailed error messages when areas can't be resolved:
+- Shows configured areas vs available area IDs
+- Shows available area names for reference
+- Suggests using `[]` to include all areas
+- Reports normalized versions attempted
+
+#### 🎯 Impact
+- **Fixes**: Dashboards not generating with underscore area IDs
+- **Ensures**: All area ID formats work correctly
+- **Maintains**: Full backward compatibility
+
+### 🧪 Testing
+- New test suite: `tests/test_area_lookup.py`
+- Validates comprehensive lookup logic
+- All tests passing ✅
+
+### 📚 Documentation
+- **BUGFIX_0.6.2.md**: Complete bug analysis and solution
+
+---
+
 ## Version 0.6.1 - Smart Area ID Matching (2025-12-16)
 
 ### 🎯 Major Fix: Automatic Area ID Mismatch Resolution
