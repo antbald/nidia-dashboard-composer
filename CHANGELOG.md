@@ -1,5 +1,105 @@
 # Release Notes
 
+## Version 0.7.0 - Device Area Inheritance (2025-12-16)
+
+### 🚀 Major Feature: Device-to-Entity Area Inheritance
+
+This release fixes a critical limitation where entities that inherit their area from their parent device were being incorrectly filtered out during discovery.
+
+#### 🐛 Problem Solved
+
+**Previous Behavior:**
+- Only entities with direct `area_id` were discovered
+- Entities inheriting area from their device were invisible
+- Result: Missing entities in dashboards, "Nessuna Area Trovata" errors
+- Affected: Zigbee, Z-Wave, and most device-based integrations
+
+**Root Cause:**
+Home Assistant uses a hierarchical model where entities can inherit `area_id` from their parent device. Previous code only checked `entity.area_id`, missing inherited areas.
+
+**Evidence:** User logs showed `Encountered area IDs in system: []` even though devices were assigned to areas.
+
+#### ✅ Solution in v0.7.0
+
+**Device Area Inheritance:**
+- Loads device registry to build `device_id → area_id` mapping
+- Resolves entity area with fallback logic:
+  1. Use direct `entity.area_id` if present (most specific)
+  2. Fall back to `device.area_id` if entity has device
+  3. Return None if neither exists
+- Updates both filtering and EntityInfo population
+
+**Resolution Priority:**
+```python
+resolved_area_id = entity.area_id or device_area_map.get(entity.device_id)
+```
+
+#### 📊 Statistics & Logging
+
+New detailed logging shows inheritance breakdown:
+```
+INFO: Discovery complete: 87 entities found
+INFO: Area assignment breakdown: 12 direct, 75 inherited from device, 0 without area
+DEBUG: Built device-to-area mapping: 45 devices with areas
+```
+
+#### 🎯 Impact
+
+**Before v0.7.0:**
+```
+Discovery complete: 0 entities found
+Encountered area IDs in system: []
+Result: "Nessuna Area Trovata" error
+```
+
+**After v0.7.0:**
+```
+Discovery complete: 87 entities found
+Area assignment breakdown: 12 direct, 75 inherited from device, 0 without area
+Encountered area IDs: ['camera_da_letto', 'cucina', 'soggiorno', ...]
+Result: Dashboard displays correctly with all entities
+```
+
+#### 🛡️ Edge Cases Handled
+
+1. **Standalone entities** (no device): Uses direct area_id only
+2. **Device without area**: Graceful fallback to None
+3. **Both entity and device have area**: Entity area wins (more specific)
+4. **Empty area filter**: All entities included regardless of area
+5. **Non-existent device**: Safe dictionary lookup, no errors
+
+#### 🧪 Testing
+
+- New comprehensive test suite: `tests/test_device_inheritance.py`
+- 4 new tests covering inheritance, precedence, filtering, edge cases
+- All 28 tests passing ✅
+- Backward compatible with existing tests
+
+#### 🔧 Files Modified
+
+- `engine.py`: Added device registry loading, resolution logic, enhanced logging
+- `test_device_inheritance.py`: New comprehensive test suite
+- `conftest.py`: Added device_registry fixture
+
+#### 🎁 Benefits
+
+- ✅ Discovers all entities (direct + inherited areas)
+- ✅ Fixes "Nessuna Area Trovata" error for device-based entities
+- ✅ Maintains backward compatibility
+- ✅ Zero breaking changes
+- ✅ Detailed diagnostics and logging
+- ✅ O(1) performance per entity
+- ✅ Handles all edge cases gracefully
+
+#### 💡 For Users
+
+If you were seeing "Nessuna Area Trovata" errors, this release will fix it! After updating:
+1. Reload the Nidia Dashboard Composer integration
+2. Generate the dashboard again
+3. Your entities should now appear correctly grouped by area
+
+---
+
 ## Version 0.6.3 - Area Name Display Fix (2025-12-16)
 
 ### 🎯 Major Fix: Correct Area Names in Dashboard

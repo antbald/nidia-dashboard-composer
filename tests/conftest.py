@@ -31,6 +31,14 @@ def mock_area_registry():
 
 
 @pytest.fixture
+def mock_device_registry():
+    """Create a mock device registry."""
+    registry = MagicMock()
+    registry.devices = {}
+    return registry
+
+
+@pytest.fixture
 def sample_entities():
     """Sample entities for testing."""
     return [

@@ -1,7 +1,7 @@
 """Dashboard Generator Engine."""
 import logging
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import area_registry, entity_registry
+from homeassistant.helpers import area_registry, device_registry, entity_registry
 
 from .modules import AVAILABLE_MODULES
 from .types import EntityInfo, LovelaceDashboard
@@ -103,7 +103,8 @@ class DashboardGenerator:
         """Discover entities from Home Assistant."""
         ent_reg = entity_registry.async_get(self.hass)
         area_reg = area_registry.async_get(self.hass)
-        
+        dev_reg = device_registry.async_get(self.hass)
+
         selected_areas = config.get("areas", [])
         _LOGGER.info("Discovery started. Selected areas from config: %s", selected_areas)
         
@@ -189,31 +190,55 @@ class DashboardGenerator:
                 )
             else:
                 _LOGGER.info("✅ Resolved %d area(s): %s", len(selected_areas), selected_areas)
-        
+
+        # Build device_id → area_id mapping for inheritance
+        device_area_map = {}
+        for device in dev_reg.devices.values():
+            if device.area_id:
+                device_area_map[device.id] = device.area_id
+
+        _LOGGER.debug("Built device-to-area mapping: %d devices with areas", len(device_area_map))
+
         entities = []
         total_entities = len(ent_reg.entities)
         filtered_by_area = 0
         no_state = 0
         entities_by_domain = {}
         entities_by_area = {}
-        
-        
+
+        # Track inheritance statistics
+        direct_area_count = 0
+        inherited_area_count = 0
+        no_area_count = 0
+
         # Track unique area IDs encountered for debugging
         encountered_area_ids = set()
-        
+
         for entity in ent_reg.entities.values():
-            # Track all area IDs we encounter
-            if entity.area_id:
-                encountered_area_ids.add(entity.area_id)
-            
-            # Filter by area if specified
-            if selected_areas and entity.area_id not in selected_areas:
+            # Resolve area_id with inheritance fallback
+            resolved_area_id = entity.area_id
+
+            if resolved_area_id:
+                # Entity has direct area_id
+                direct_area_count += 1
+                encountered_area_ids.add(resolved_area_id)
+            elif entity.device_id and entity.device_id in device_area_map:
+                # Entity inherits area from device
+                resolved_area_id = device_area_map[entity.device_id]
+                inherited_area_count += 1
+                encountered_area_ids.add(resolved_area_id)
+            else:
+                # No area assigned
+                no_area_count += 1
+
+            # Filter by area if specified (use resolved_area_id)
+            if selected_areas and resolved_area_id not in selected_areas:
                 filtered_by_area += 1
                 # Log first few mismatches for debugging
                 if filtered_by_area <= 3:
                     _LOGGER.debug(
-                        "Entity %s filtered: area_id='%s' not in selected_areas %s",
-                        entity.entity_id, entity.area_id, selected_areas
+                        "Entity %s filtered: resolved_area_id='%s' (direct=%s, device=%s) not in selected_areas %s",
+                        entity.entity_id, resolved_area_id, entity.area_id, entity.device_id, selected_areas
                     )
                 continue
             
@@ -226,25 +251,29 @@ class DashboardGenerator:
             entity_info = {
                 "entity_id": entity.entity_id,
                 "domain": entity.domain,
-                "area_id": entity.area_id,
-                "area_name": all_areas.get(entity.area_id) if entity.area_id else None,
+                "area_id": resolved_area_id,
+                "area_name": all_areas.get(resolved_area_id) if resolved_area_id else None,
                 "friendly_name": state.attributes.get("friendly_name", entity.entity_id),
                 "state": state.state,
                 "attributes": dict(state.attributes),
                 "device_class": state.attributes.get("device_class") or entity.device_class
             }
             entities.append(entity_info)
-            
+
             # Track statistics
             entities_by_domain[entity.domain] = entities_by_domain.get(entity.domain, 0) + 1
-            if entity.area_id:
-                area_name = all_areas.get(entity.area_id, entity.area_id)
+            if resolved_area_id:
+                area_name = all_areas.get(resolved_area_id, resolved_area_id)
                 entities_by_area[area_name] = entities_by_area.get(area_name, 0) + 1
         
         
         _LOGGER.info(
             "Discovery complete: %d entities found (from %d total, %d filtered by area, %d without state)",
             len(entities), total_entities, filtered_by_area, no_state
+        )
+        _LOGGER.info(
+            "Area assignment breakdown: %d direct, %d inherited from device, %d without area",
+            direct_area_count, inherited_area_count, no_area_count
         )
         _LOGGER.debug("Entities by domain: %s", entities_by_domain)
         _LOGGER.debug("Entities by area: %s", entities_by_area)
