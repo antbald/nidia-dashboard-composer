@@ -17,6 +17,7 @@ class EntityInfo(TypedDict):
     entity_id: str
     domain: str
     area_id: str | None
+    area_name: str | None
     friendly_name: str
     state: str
     attributes: dict[str, Any]

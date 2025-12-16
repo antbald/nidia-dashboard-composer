@@ -38,9 +38,11 @@ class RoomsModule:
                 continue
                 
             if area_id not in areas:
+                # Use actual area_name from HA if available, fallback to formatted area_id
+                area_name = ent.get("area_name") or area_id.replace("_", " ").title()
                 areas[area_id] = {
                     "area_id": area_id,
-                    "name": area_id.replace("_", " ").title(), # Fallback name
+                    "name": area_name,
                     "entities": []
                 }
             

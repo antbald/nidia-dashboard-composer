@@ -227,6 +227,7 @@ class DashboardGenerator:
                 "entity_id": entity.entity_id,
                 "domain": entity.domain,
                 "area_id": entity.area_id,
+                "area_name": all_areas.get(entity.area_id) if entity.area_id else None,
                 "friendly_name": state.attributes.get("friendly_name", entity.entity_id),
                 "state": state.state,
                 "attributes": dict(state.attributes),

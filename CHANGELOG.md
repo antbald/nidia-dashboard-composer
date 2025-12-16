@@ -1,5 +1,71 @@
 # Release Notes
 
+## Version 0.6.3 - Area Name Display Fix (2025-12-16)
+
+### 🎯 Major Fix: Correct Area Names in Dashboard
+
+This release fixes an issue where area names were displayed with incorrect capitalization in the dashboard.
+
+#### 🐛 Problem Description
+**Previous Behavior:**
+- Area IDs were correctly matched (thanks to v0.6.2)
+- But area names displayed were generated from area_id using fallback logic
+- Example: `camera_da_letto` → displayed as "Camera Da Letto" (wrong)
+- Correct name in Home Assistant: "Camera da letto"
+
+**Root Cause:**
+The `EntityInfo` type only contained `area_id`, not the actual `area_name` from Home Assistant's area registry. Modules had no access to the correct area names.
+
+#### ✅ Solution in v0.6.3
+**Enhanced EntityInfo with area_name:**
+- Added `area_name` field to `EntityInfo` TypedDict
+- Engine now populates `area_name` during entity discovery
+- Rooms module uses actual Home Assistant area names for display
+- Maintains backward compatibility with fallback logic
+
+**Data Flow:**
+1. Engine loads area registry: `{area.id: area.name}`
+2. Entity discovery populates both `area_id` and `area_name`
+3. Modules receive complete information
+4. Dashboard displays correct area names
+
+#### 📊 Result
+```
+✅ camera_da_letto → displays "Camera da letto" (correct)
+✅ cucina → displays "Cucina" (correct)
+✅ soggiorno → displays "Soggiorno" (correct)
+✅ vano_tecnico → displays "Vano Tecnico" (correct)
+```
+
+#### 🛡️ Edge Cases Handled
+- Entities without areas: `area_id = None`, `area_name = None`
+- Missing area_name field: Falls back to formatted area_id
+- Empty area name: Falls back to formatted area_id
+- Area ID not in registry: Graceful fallback
+
+#### 🧪 Testing
+- New comprehensive test suite: `tests/test_area_names.py`
+- Tests for correct name usage, fallback behavior, None handling, multiple areas
+- Updated test fixtures with `area_name` field
+- All 24 tests passing ✅
+
+#### 🔧 Files Modified
+- `types.py`: Added `area_name: str | None` to EntityInfo
+- `engine.py`: Populate area_name during entity discovery
+- `rooms_module.py`: Use area_name instead of fallback
+- `conftest.py`: Updated test fixtures
+- `test_area_names.py`: New comprehensive test suite
+
+#### 🎁 Benefits
+- ✅ Correct area names matching Home Assistant exactly
+- ✅ Proper Italian capitalization (e.g., "Camera da letto" not "Camera Da Letto")
+- ✅ Type-safe implementation
+- ✅ Backward compatible
+- ✅ Zero performance overhead
+- ✅ Extensible for other modules
+
+---
+
 ## Version 0.6.2 - Critical Bugfix (2025-12-16)
 
 ### 🚨 CRITICAL BUGFIX: Area Matching Logic

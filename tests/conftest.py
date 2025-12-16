@@ -38,15 +38,21 @@ def sample_entities():
             "entity_id": "light.living_room",
             "domain": "light",
             "area_id": "living_room",
+            "area_name": "Living Room",
             "friendly_name": "Living Room Light",
-            "state": "on"
+            "state": "on",
+            "attributes": {},
+            "device_class": None
         },
         {
             "entity_id": "climate.bedroom",
             "domain": "climate",
             "area_id": "bedroom",
+            "area_name": "Bedroom",
             "friendly_name": "Bedroom Thermostat",
-            "state": "heat"
+            "state": "heat",
+            "attributes": {},
+            "device_class": None
         }
     ]
 
