@@ -107,9 +107,56 @@ class DashboardGenerator:
         selected_areas = config.get("areas", [])
         _LOGGER.info("Discovery started. Selected areas from config: %s", selected_areas)
         
-        # Log all available areas
+        # Build area mappings for smart matching
         all_areas = {area.id: area.name for area in area_reg.areas.values()}
         _LOGGER.debug("Available areas in HA: %s", all_areas)
+        
+        # Create normalized name → area_id mapping for fuzzy matching
+        area_name_to_id = {}
+        for area in area_reg.areas.values():
+            # Normalize: lowercase, remove spaces and special chars
+            normalized_name = area.name.lower().replace(" ", "").replace("_", "").replace("-", "")
+            area_name_to_id[normalized_name] = area.id
+            # Also map the exact ID
+            area_name_to_id[area.id] = area.id
+        
+        # Smart area resolution: if selected_areas contains IDs that don't exist,
+        # try to match them by normalized name
+        resolved_areas = []
+        area_auto_corrections = {}
+        
+        if selected_areas:
+            for configured_area in selected_areas:
+                # Try exact match first
+                if configured_area in all_areas:
+                    resolved_areas.append(configured_area)
+                else:
+                    # Try normalized fuzzy match
+                    normalized_config = configured_area.lower().replace(" ", "").replace("_", "").replace("-", "")
+                    if normalized_config in area_name_to_id:
+                        matched_id = area_name_to_id[normalized_config]
+                        resolved_areas.append(matched_id)
+                        area_auto_corrections[configured_area] = matched_id
+                        _LOGGER.warning(
+                            "⚠️  Area ID auto-corrected: '%s' → '%s' (name: '%s')",
+                            configured_area, matched_id, all_areas.get(matched_id, "Unknown")
+                        )
+                    else:
+                        _LOGGER.warning(
+                            "❌ Area ID '%s' not found in system and couldn't be auto-matched. Skipping.",
+                            configured_area
+                        )
+            
+            # If we made auto-corrections, suggest updating the config
+            if area_auto_corrections:
+                _LOGGER.warning(
+                    "💡 TIP: Update your configuration to use the correct area IDs: %s",
+                    list(area_auto_corrections.values())
+                )
+            
+            # Use resolved areas for filtering
+            selected_areas = resolved_areas if resolved_areas else selected_areas
+            _LOGGER.info("Resolved area filter: %s", selected_areas)
         
         entities = []
         total_entities = len(ent_reg.entities)
@@ -118,10 +165,24 @@ class DashboardGenerator:
         entities_by_domain = {}
         entities_by_area = {}
         
+        
+        # Track unique area IDs encountered for debugging
+        encountered_area_ids = set()
+        
         for entity in ent_reg.entities.values():
+            # Track all area IDs we encounter
+            if entity.area_id:
+                encountered_area_ids.add(entity.area_id)
+            
             # Filter by area if specified
             if selected_areas and entity.area_id not in selected_areas:
                 filtered_by_area += 1
+                # Log first few mismatches for debugging
+                if filtered_by_area <= 3:
+                    _LOGGER.debug(
+                        "Entity %s filtered: area_id='%s' not in selected_areas %s",
+                        entity.entity_id, entity.area_id, selected_areas
+                    )
                 continue
             
             # Get state
@@ -147,12 +208,25 @@ class DashboardGenerator:
                 area_name = all_areas.get(entity.area_id, entity.area_id)
                 entities_by_area[area_name] = entities_by_area.get(area_name, 0) + 1
         
+        
         _LOGGER.info(
             "Discovery complete: %d entities found (from %d total, %d filtered by area, %d without state)",
             len(entities), total_entities, filtered_by_area, no_state
         )
         _LOGGER.debug("Entities by domain: %s", entities_by_domain)
         _LOGGER.debug("Entities by area: %s", entities_by_area)
+        
+        # Warning if no entities found but areas were filtered
+        if len(entities) == 0 and filtered_by_area > 0:
+            _LOGGER.warning(
+                "⚠️  All entities filtered by area! This is likely an area ID mismatch."
+            )
+            _LOGGER.warning("Selected areas in config: %s", selected_areas)
+            _LOGGER.warning("Encountered area IDs in system: %s", sorted(encountered_area_ids))
+            _LOGGER.warning(
+                "💡 TIP: The area IDs must match EXACTLY. "
+                "Check '.storage/core.area_registry' for the correct 'id' field (not 'name')."
+            )
         
         return entities
 

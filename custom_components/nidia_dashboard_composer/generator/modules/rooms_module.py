@@ -61,9 +61,22 @@ class RoomsModule:
         
         if not rooms_list:
             _LOGGER.warning("No rooms found! Check if entities are assigned to areas.")
+            
+            # Get available areas from hass if possible (for better error message)
+            available_areas_info = ""
+            try:
+                from homeassistant.helpers import area_registry as ar
+                area_reg = ar.async_get(config.get("_hass"))  # We'll need to pass hass
+                if area_reg:
+                    available_areas = [f"{area.name} (id: {area.id})" for area in area_reg.areas.values()]
+                    if available_areas:
+                        available_areas_info = f"\n\n**Aree Disponibili:**\n" + "\n".join(f"- {a}" for a in available_areas[:10])
+            except:
+                pass  # Fallback if we can't get area info
+            
             cards = [{
                 "type": "markdown",
-                "content": "## ⚠️ Nessuna Area Trovata\n\nNon sono state trovate entità associate ad aree o tutte le aree sono state filtrate.\n\n**Possibili Cause:**\n1. I dispositivi non sono assegnati alle Aree in Home Assistant.\n2. La configurazione delle aree nel composer esclude tutte le aree esistenti.\n\n**Soluzione:**\nVa su **Impostazioni > Dispositivi e Servizi** e assicurati che i dispositivi siano assegnati alle stanze (es. Cucina, Salone).\n\n**Debug Info:**\n- Source entities: %d\n- Config areas filter: %s" % (len(source_entities), config.get("areas", []))
+                "content": f"## ⚠️ Nessuna Area Trovata\n\nNon sono state trovate entità associate ad aree o tutte le aree sono state filtrate.\n\n**Possibili Cause:**\n1. I dispositivi non sono assegnati alle Aree in Home Assistant.\n2. La configurazione delle aree nel composer esclude tutte le aree esistenti.\n3. **Gli ID delle aree nella config non corrispondono** agli ID effettivi del sistema.\n\n**Soluzione:**\n1. Vai su **Impostazioni > Aree e Zone** e assicurati che i dispositivi siano assegnati alle stanze.\n2. **Controlla gli ID delle aree**: potrebbero essere diversi da quelli che hai configurato (es. 'camera_da_letto' vs 'cameradaletto').\n3. **Usa `[]` per il filtro aree** se vuoi includere tutte le aree.{available_areas_info}\n\n**Debug Info:**\n- Source entities: {len(source_entities)}\n- Config areas filter: {config.get('areas', [])}"
             }]
         else:
             _LOGGER.info("Generating cards for %d rooms", len(rooms_list))

@@ -1,5 +1,73 @@
 # Release Notes
 
+## Version 0.6.1 - Smart Area ID Matching (2025-12-16)
+
+### 🎯 Major Fix: Automatic Area ID Mismatch Resolution
+
+This release solves a critical issue where dashboards wouldn't generate when configured area IDs didn't match the actual IDs in Home Assistant.
+
+#### 🔧 Smart Area ID Fuzzy Matching
+- **Automatic ID normalization**: Removes spaces, underscores, hyphens, and applies lowercase
+- **Intelligent matching**: Finds correct area IDs even when configuration uses different formats
+- **Auto-correction**: Automatically resolves mismatches and logs corrections
+- **Clear warnings**: Notifies you when auto-corrections happen with suggestions
+
+**Examples of automatic resolution:**
+- `camera_da_letto` → `cameradaletto` ✅
+- `Camera da Letto` → `cameradaletto` ✅
+- `vano_tecnico` → `vanotecnico` ✅
+- `Camera-Matrimoniale` → `cameramatrimoniale` ✅
+
+#### 📊 Enhanced Logging
+- **Area ID comparison**: Shows configured IDs vs actual system IDs
+- **Auto-correction tracking**: Logs each ID that gets auto-corrected
+- **Mismatch detection**: Warns when areas can't be matched
+- **Helpful suggestions**: Provides correct IDs to update configuration
+
+#### 🛡️ Safety & Fallbacks
+- Non-matching areas are skipped safely without breaking generation
+- Exact ID matches are used first (no performance impact for correct configs)
+- Empty array `[]` still works to include all areas
+
+#### 🔍 Improved Error Messages
+- Explicit mention of possible Area ID mismatch
+- Shows available areas when possible
+- Suggests using `[]` to include all areas
+- More detailed debug information
+
+#### 🧪 Testing
+- New test suite: `tests/test_area_matching.py`
+- Validates 10+ normalization scenarios
+- All tests passing ✅
+
+#### 📚 Documentation
+- **AREA_ID_FIX.md**: Complete guide to the fuzzy matching system
+- **AREA_ID_RESOLUTION_SUMMARY.md**: Technical implementation details
+- **check_area_ids.py**: Utility to verify area IDs in your system
+
+### 🐛 Bug Fixes
+- Fixed issue where 0 entities were discovered due to area ID mismatch
+- Resolved dashboard not generating rooms despite devices being assigned to areas
+
+### 💡 Use Case
+**Problem**: You configured:
+```json
+{"areas": ["camera_da_letto", "vano_tecnico"]}
+```
+But your system has: `["cameradaletto", "vanotecnico"]`
+
+**Before v0.6.1**: 0 entities found, dashboard empty  
+**After v0.6.1**: Auto-corrected, dashboard generates correctly! 🎉
+
+### 🎁 Benefits
+- ✅ Works "out of the box" with common configuration mistakes
+- ✅ No need to manually check area IDs
+- ✅ Clear logging explains what's happening
+- ✅ Backward compatible with existing configurations
+- ✅ Self-healing for minor configuration errors
+
+---
+
 ## Version 0.6.0 - Enhanced Diagnostics (2025-12-16)
 
 ### 🔍 Diagnostic & Debugging Features
