@@ -3,6 +3,14 @@ from typing import TypedDict, List, Any
 from dataclasses import dataclass
 
 
+class EnergyVillettaConfig(TypedDict, total=False):
+    """Configuration for Energy Villetta module."""
+    enabled: bool
+    home_consumption_sensor: str | None
+    photovoltaic_enabled: bool
+    photovoltaic_production_sensor: str | None
+
+
 class ComposerConfig(TypedDict, total=False):
     """Configuration for dashboard generation."""
     areas: List[str]
@@ -10,6 +18,7 @@ class ComposerConfig(TypedDict, total=False):
     theme: str
     layout_style: str
     background: str  # 'none', 'modern', etc.
+    energy_villetta: EnergyVillettaConfig
 
 
 class EntityInfo(TypedDict):

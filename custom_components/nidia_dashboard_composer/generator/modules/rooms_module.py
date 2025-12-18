@@ -83,7 +83,7 @@ class RoomsModule:
         else:
             _LOGGER.info("Generating cards for %d rooms", len(rooms_list))
             # Generate cards
-            cards = generate_lighting_module_for_all_rooms(rooms_list)
+            cards = generate_lighting_module_for_all_rooms(rooms_list, config)
             _LOGGER.info("Generated %d total cards", len(cards))
         
         # Get background configuration

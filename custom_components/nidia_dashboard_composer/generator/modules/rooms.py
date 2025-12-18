@@ -48,6 +48,85 @@ def generate_branding_card() -> LovelaceCard:
     })
 
 
+def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
+    """Generate Energy Image (Villetta model) card if enabled."""
+    villetta_config = config.get("energy_villetta", {})
+
+    # Return None if module disabled or sensor missing
+    if not villetta_config.get("enabled", False):
+        return None
+
+    home_sensor = villetta_config.get("home_consumption_sensor")
+    if not home_sensor:
+        return None
+
+    # Base elements - always include home consumption label
+    elements: List[dict[str, Any]] = [
+        {
+            "type": "state-label",
+            "entity": home_sensor,
+            "style": {
+                "top": "89%",
+                "left": "13%",
+                "color": "black",
+                "font-size": "12px",
+                "font-weight": "700",
+                "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                "z-index": "1"
+            }
+        }
+    ]
+
+    # Add photovoltaic conditional elements if enabled
+    pv_enabled = villetta_config.get("photovoltaic_enabled", False)
+    pv_sensor = villetta_config.get("photovoltaic_production_sensor")
+
+    if pv_enabled and pv_sensor:
+        # Conditional wrapper with EXACT 3-condition pattern
+        pv_elements: List[dict[str, Any]] = [
+            {
+                "type": "image",
+                "image": "/nidia_dashboard_composer_static/sfondo-villetta-fv.png",
+                "style": {
+                    "top": "50%",
+                    "left": "50%",
+                    "width": "100%",
+                    "pointer-events": "none",
+                    "z-index": "1"
+                }
+            },
+            {
+                "type": "state-label",
+                "entity": pv_sensor,
+                "style": {
+                    "top": "8%",
+                    "left": "85%",
+                    "color": "black",
+                    "font-size": "12px",
+                    "font-weight": "700",
+                    "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                    "z-index": "1"
+                }
+            }
+        ]
+
+        # Wrap in conditional with 3 state_not conditions (EXACT pattern required)
+        elements.append({
+            "type": "conditional",
+            "conditions": [
+                {"entity": pv_sensor, "state_not": "0"},
+                {"entity": pv_sensor, "state_not": "0 W"},
+                {"entity": pv_sensor, "state_not": "0.0"}
+            ],
+            "elements": pv_elements
+        })
+
+    return cast(LovelaceCard, {
+        "type": "picture-elements",
+        "image": "/nidia_dashboard_composer_static/sfondo-villetta.png",
+        "elements": elements
+    })
+
 
 def get_room_lights(room: Room) -> List[EntityInfo]:
     """Get lights for a room."""
@@ -166,13 +245,19 @@ def generate_lighting_module_for_room(room: Room) -> List[LovelaceCard]:
         
     return cards
 
-def generate_lighting_module_for_all_rooms(rooms: List[Room]) -> List[LovelaceCard]:
+def generate_lighting_module_for_all_rooms(rooms: List[Room], config: dict | None = None) -> List[LovelaceCard]:
     """Generate cards for all rooms."""
     all_cards: List[LovelaceCard] = []
-    
+
     # Add branding card at the top
     all_cards.append(generate_branding_card())
-    
+
+    # Add energy villetta card if enabled (immediately after branding)
+    if config:
+        villetta_card = generate_energy_villetta_card(config)
+        if villetta_card:
+            all_cards.append(villetta_card)
+
     for room in rooms:
         all_cards.extend(generate_lighting_module_for_room(room))
     return all_cards

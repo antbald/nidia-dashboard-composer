@@ -16,7 +16,13 @@ class ComposerStorage:
             data = {
                 "areas": [],
                 "modules": [],
-                "theme": "default"
+                "theme": "default",
+                "energy_villetta": {
+                    "enabled": False,
+                    "home_consumption_sensor": None,
+                    "photovoltaic_enabled": False,
+                    "photovoltaic_production_sensor": None
+                }
             }
         self._data = data
         return self._data

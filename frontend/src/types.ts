@@ -30,12 +30,20 @@ export interface HassEntity {
     last_updated: string;
 }
 
+export interface EnergyVillettaConfig {
+    enabled: boolean;
+    home_consumption_sensor: string | null;
+    photovoltaic_enabled: boolean;
+    photovoltaic_production_sensor: string | null;
+}
+
 export interface ComposerConfig {
     areas: string[];
     modules: string[];
     theme: string;
     layout_style?: string;
     background?: string; // added for background selection
+    energy_villetta?: EnergyVillettaConfig;
 }
 
 export interface TestScenarioResult {

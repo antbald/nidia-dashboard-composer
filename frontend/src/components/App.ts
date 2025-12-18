@@ -12,7 +12,13 @@ export class NidiaDashboardComposerPanel extends LitElement {
     areas: [],
     modules: [],
     theme: 'default',
-    layout_style: 'standard'
+    layout_style: 'standard',
+    energy_villetta: {
+      enabled: false,
+      home_consumption_sensor: null,
+      photovoltaic_enabled: false,
+      photovoltaic_production_sensor: null
+    }
   };
 
   @state() private _loading = false;
@@ -275,6 +281,18 @@ export class NidiaDashboardComposerPanel extends LitElement {
     this._config = { ...this._config };
   }
 
+  private _getSensorEntities() {
+    if (!this.hass?.states) return [];
+
+    return Object.values(this.hass.states)
+      .filter(entity => entity.entity_id.startsWith('sensor.'))
+      .map(entity => ({
+        entity_id: entity.entity_id,
+        friendly_name: entity.attributes.friendly_name || entity.entity_id
+      }))
+      .sort((a, b) => a.friendly_name.localeCompare(b.friendly_name));
+  }
+
   render() {
     const areas = this.hass?.areas ? Object.values(this.hass.areas) : [];
 
@@ -323,6 +341,111 @@ export class NidiaDashboardComposerPanel extends LitElement {
     </div>
   </div>
 </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Energy Image (Villetta)</h2>
+          </div>
+
+          <!-- Module Enable Toggle -->
+          <div style="margin-bottom: 16px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input
+                type="checkbox"
+                .checked="${this._config.energy_villetta?.enabled || false}"
+                @change="${(e: any) => {
+                  this._config = {
+                    ...this._config,
+                    energy_villetta: {
+                      ...this._config.energy_villetta,
+                      enabled: e.target.checked,
+                      home_consumption_sensor: this._config.energy_villetta?.home_consumption_sensor || null,
+                      photovoltaic_enabled: this._config.energy_villetta?.photovoltaic_enabled || false,
+                      photovoltaic_production_sensor: this._config.energy_villetta?.photovoltaic_production_sensor || null
+                    }
+                  };
+                }}"
+                style="margin-right: 8px;"
+              />
+              <span style="font-weight: 500;">Enable Energy Image Module</span>
+            </label>
+          </div>
+
+          ${this._config.energy_villetta?.enabled ? html`
+            <!-- Home Consumption Sensor -->
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                Home Consumption Sensor <span style="color: red;">*</span>
+              </label>
+              <select
+                .value="${this._config.energy_villetta?.home_consumption_sensor || ''}"
+                @change="${(e: any) => {
+                  this._config = {
+                    ...this._config,
+                    energy_villetta: {
+                      ...this._config.energy_villetta!,
+                      home_consumption_sensor: e.target.value || null
+                    }
+                  };
+                }}"
+                style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--primary-background-color); color: var(--primary-text-color);"
+              >
+                <option value="">Select entity...</option>
+                ${this._getSensorEntities().map(entity => html`
+                  <option value="${entity.entity_id}">${entity.friendly_name || entity.entity_id}</option>
+                `)}
+              </select>
+            </div>
+
+            <!-- Photovoltaic Toggle -->
+            <div style="margin-bottom: 16px;">
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  .checked="${this._config.energy_villetta?.photovoltaic_enabled || false}"
+                  @change="${(e: any) => {
+                    this._config = {
+                      ...this._config,
+                      energy_villetta: {
+                        ...this._config.energy_villetta!,
+                        photovoltaic_enabled: e.target.checked
+                      }
+                    };
+                  }}"
+                  style="margin-right: 8px;"
+                />
+                <span style="font-weight: 500;">Photovoltaic System</span>
+              </label>
+            </div>
+
+            ${this._config.energy_villetta?.photovoltaic_enabled ? html`
+              <!-- PV Production Sensor -->
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                  Instant Photovoltaic Production Sensor <span style="color: red;">*</span>
+                </label>
+                <select
+                  .value="${this._config.energy_villetta?.photovoltaic_production_sensor || ''}"
+                  @change="${(e: any) => {
+                    this._config = {
+                      ...this._config,
+                      energy_villetta: {
+                        ...this._config.energy_villetta!,
+                        photovoltaic_production_sensor: e.target.value || null
+                      }
+                    };
+                  }}"
+                  style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--primary-background-color); color: var(--primary-text-color);"
+                >
+                  <option value="">Select entity...</option>
+                  ${this._getSensorEntities().map(entity => html`
+                    <option value="${entity.entity_id}">${entity.friendly_name || entity.entity_id}</option>
+                  `)}
+                </select>
+              </div>
+            ` : ''}
+          ` : ''}
+        </div>
 
         ${this._generatedDashboard ? html`
           <div class="card">
