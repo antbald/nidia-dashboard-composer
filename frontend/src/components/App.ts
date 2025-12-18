@@ -16,8 +16,11 @@ export class NidiaDashboardComposerPanel extends LitElement {
     energy_villetta: {
       enabled: false,
       home_consumption_sensor: null,
+      import_power_sensor: null,
       photovoltaic_enabled: false,
-      photovoltaic_production_sensor: null
+      photovoltaic_production_sensor: null,
+      battery_enabled: false,
+      battery_sensor: null
     }
   };
 
@@ -360,8 +363,11 @@ export class NidiaDashboardComposerPanel extends LitElement {
                       ...this._config.energy_villetta,
                       enabled: e.target.checked,
                       home_consumption_sensor: this._config.energy_villetta?.home_consumption_sensor || null,
+                      import_power_sensor: this._config.energy_villetta?.import_power_sensor || null,
                       photovoltaic_enabled: this._config.energy_villetta?.photovoltaic_enabled || false,
-                      photovoltaic_production_sensor: this._config.energy_villetta?.photovoltaic_production_sensor || null
+                      photovoltaic_production_sensor: this._config.energy_villetta?.photovoltaic_production_sensor || null,
+                      battery_enabled: this._config.energy_villetta?.battery_enabled || false,
+                      battery_sensor: this._config.energy_villetta?.battery_sensor || null
                     }
                   };
                 }}"
@@ -385,6 +391,31 @@ export class NidiaDashboardComposerPanel extends LitElement {
                     energy_villetta: {
                       ...this._config.energy_villetta!,
                       home_consumption_sensor: e.target.value || null
+                    }
+                  };
+                }}"
+                style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--primary-background-color); color: var(--primary-text-color);"
+              >
+                <option value="">Select entity...</option>
+                ${this._getSensorEntities().map(entity => html`
+                  <option value="${entity.entity_id}">${entity.friendly_name || entity.entity_id}</option>
+                `)}
+              </select>
+            </div>
+
+            <!-- Import Power Sensor -->
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                Import Power Sensor <span style="color: red;">*</span>
+              </label>
+              <select
+                .value="${this._config.energy_villetta?.import_power_sensor || ''}"
+                @change="${(e: any) => {
+                  this._config = {
+                    ...this._config,
+                    energy_villetta: {
+                      ...this._config.energy_villetta!,
+                      import_power_sensor: e.target.value || null
                     }
                   };
                 }}"
@@ -432,6 +463,54 @@ export class NidiaDashboardComposerPanel extends LitElement {
                       energy_villetta: {
                         ...this._config.energy_villetta!,
                         photovoltaic_production_sensor: e.target.value || null
+                      }
+                    };
+                  }}"
+                  style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--divider-color); background: var(--primary-background-color); color: var(--primary-text-color);"
+                >
+                  <option value="">Select entity...</option>
+                  ${this._getSensorEntities().map(entity => html`
+                    <option value="${entity.entity_id}">${entity.friendly_name || entity.entity_id}</option>
+                  `)}
+                </select>
+              </div>
+            ` : ''}
+
+            <!-- Battery Toggle -->
+            <div style="margin-bottom: 16px;">
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  .checked="${this._config.energy_villetta?.battery_enabled || false}"
+                  @change="${(e: any) => {
+                    this._config = {
+                      ...this._config,
+                      energy_villetta: {
+                        ...this._config.energy_villetta!,
+                        battery_enabled: e.target.checked
+                      }
+                    };
+                  }}"
+                  style="margin-right: 8px;"
+                />
+                <span style="font-weight: 500;">Battery Storage System</span>
+              </label>
+            </div>
+
+            ${this._config.energy_villetta?.battery_enabled ? html`
+              <!-- Battery Sensor -->
+              <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 4px; font-weight: 500;">
+                  Battery Power / Status Sensor <span style="color: red;">*</span>
+                </label>
+                <select
+                  .value="${this._config.energy_villetta?.battery_sensor || ''}"
+                  @change="${(e: any) => {
+                    this._config = {
+                      ...this._config,
+                      energy_villetta: {
+                        ...this._config.energy_villetta!,
+                        battery_sensor: e.target.value || null
                       }
                     };
                   }}"

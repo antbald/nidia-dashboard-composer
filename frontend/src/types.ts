@@ -33,8 +33,11 @@ export interface HassEntity {
 export interface EnergyVillettaConfig {
     enabled: boolean;
     home_consumption_sensor: string | null;
+    import_power_sensor: string | null;
     photovoltaic_enabled: boolean;
     photovoltaic_production_sensor: string | null;
+    battery_enabled: boolean;
+    battery_sensor: string | null;
 }
 
 export interface ComposerConfig {

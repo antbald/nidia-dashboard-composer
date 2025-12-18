@@ -20,8 +20,11 @@ class ComposerStorage:
                 "energy_villetta": {
                     "enabled": False,
                     "home_consumption_sensor": None,
+                    "import_power_sensor": None,
                     "photovoltaic_enabled": False,
-                    "photovoltaic_production_sensor": None
+                    "photovoltaic_production_sensor": None,
+                    "battery_enabled": False,
+                    "battery_sensor": None
                 }
             }
         self._data = data

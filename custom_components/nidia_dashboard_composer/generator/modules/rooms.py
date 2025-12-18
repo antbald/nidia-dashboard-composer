@@ -60,7 +60,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
     if not home_sensor:
         return None
 
-    # Base elements - always include home consumption label
+    # Base elements - always include home consumption and import power labels
     elements: List[dict[str, Any]] = [
         {
             "type": "state-label",
@@ -69,13 +69,63 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
                 "top": "89%",
                 "left": "13%",
                 "color": "black",
-                "font-size": "12px",
+                "font-size": "13px",
                 "font-weight": "700",
                 "text-shadow": "0 0 2px rgba(255,255,255,.8)",
                 "z-index": "1"
             }
         }
     ]
+
+    # Add import power label if configured
+    import_sensor = villetta_config.get("import_power_sensor")
+    if import_sensor:
+        elements.append({
+            "type": "state-label",
+            "entity": import_sensor,
+            "style": {
+                "top": "13.5%",
+                "left": "8%",
+                "color": "black",
+                "font-size": "13px",
+                "font-weight": "700",
+                "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                "z-index": "1"
+            }
+        })
+
+    # Add battery elements if enabled (ALWAYS VISIBLE - no conditional)
+    battery_enabled = villetta_config.get("battery_enabled", False)
+    battery_sensor = villetta_config.get("battery_sensor")
+
+    if battery_enabled and battery_sensor:
+        # Battery overlay image (always visible)
+        elements.append({
+            "type": "image",
+            "image": "/nidia_dashboard_composer_static/sfondo-villetta-batteria.png",
+            "style": {
+                "top": "50%",
+                "left": "50%",
+                "width": "100%",
+                "pointer-events": "none",
+                "z-index": "1"
+            }
+        })
+
+        # Battery state label (always visible)
+        elements.append({
+            "type": "state-label",
+            "entity": battery_sensor,
+            "style": {
+                "top": "89%",
+                "left": "85%",
+                "color": "black",
+                "font-size": "13px",
+                "font-weight": "700",
+                "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                "z-index": "1"
+            }
+        })
 
     # Add photovoltaic conditional elements if enabled
     pv_enabled = villetta_config.get("photovoltaic_enabled", False)
@@ -102,7 +152,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
                     "top": "8%",
                     "left": "85%",
                     "color": "black",
-                    "font-size": "12px",
+                    "font-size": "13px",
                     "font-weight": "700",
                     "text-shadow": "0 0 2px rgba(255,255,255,.8)",
                     "z-index": "1"

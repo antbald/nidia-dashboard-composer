@@ -7,8 +7,11 @@ class EnergyVillettaConfig(TypedDict, total=False):
     """Configuration for Energy Villetta module."""
     enabled: bool
     home_consumption_sensor: str | None
+    import_power_sensor: str | None
     photovoltaic_enabled: bool
     photovoltaic_production_sensor: str | None
+    battery_enabled: bool
+    battery_sensor: str | None
 
 
 class ComposerConfig(TypedDict, total=False):
