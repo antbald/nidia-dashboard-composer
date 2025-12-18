@@ -296,8 +296,30 @@ export class NidiaDashboardComposerPanel extends LitElement {
       .sort((a, b) => a.friendly_name.localeCompare(b.friendly_name));
   }
 
+  private _getAreasByFloor() {
+    if (!this.hass?.areas) return { floors: {}, noFloor: [] };
+
+    const areas = Object.values(this.hass.areas);
+    const floors: { [floor_id: string]: typeof areas } = {};
+    const noFloor: typeof areas = [];
+
+    areas.forEach(area => {
+      if (area.floor_id) {
+        if (!floors[area.floor_id]) {
+          floors[area.floor_id] = [];
+        }
+        floors[area.floor_id].push(area);
+      } else {
+        noFloor.push(area);
+      }
+    });
+
+    return { floors, noFloor };
+  }
+
   render() {
     const areas = this.hass?.areas ? Object.values(this.hass.areas) : [];
+    const { floors, noFloor } = this._getAreasByFloor();
 
     return html`
       <div class="container">
@@ -314,19 +336,45 @@ export class NidiaDashboardComposerPanel extends LitElement {
               <button class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" @click="${this._deselectAllAreas}">None</button>
             </div>
           </div>
-          
+
           ${areas.length > 0 ? html`
-            <div class="area-grid">
-              ${areas.map(area => html`
-                <div 
-                  class="area-card ${this._config.areas.includes(area.area_id) ? 'selected' : ''}"
-                  @click="${() => this._toggleArea(area.area_id)}"
-                >
-                  <span class="area-icon">🏠</span>
-                  <div class="area-name">${area.name}</div>
+            ${Object.entries(floors).map(([floorId, floorAreas]) => html`
+              <div style="margin-bottom: 24px;">
+                <h3 style="margin: 16px 0 12px 0; font-size: 14px; font-weight: 600; color: var(--secondary-text-color); text-transform: uppercase; letter-spacing: 0.5px;">
+                  ${floorId}
+                </h3>
+                <div class="area-grid">
+                  ${floorAreas.map(area => html`
+                    <div
+                      class="area-card ${this._config.areas.includes(area.area_id) ? 'selected' : ''}"
+                      @click="${() => this._toggleArea(area.area_id)}"
+                    >
+                      <span class="area-icon">🏠</span>
+                      <div class="area-name">${area.name}</div>
+                    </div>
+                  `)}
                 </div>
-              `)}
-            </div>
+              </div>
+            `)}
+
+            ${noFloor.length > 0 ? html`
+              <div style="margin-bottom: 24px;">
+                <h3 style="margin: 16px 0 12px 0; font-size: 14px; font-weight: 600; color: var(--secondary-text-color); text-transform: uppercase; letter-spacing: 0.5px;">
+                  Other Areas
+                </h3>
+                <div class="area-grid">
+                  ${noFloor.map(area => html`
+                    <div
+                      class="area-card ${this._config.areas.includes(area.area_id) ? 'selected' : ''}"
+                      @click="${() => this._toggleArea(area.area_id)}"
+                    >
+                      <span class="area-icon">🏠</span>
+                      <div class="area-name">${area.name}</div>
+                    </div>
+                  `)}
+                </div>
+              </div>
+            ` : ''}
           ` : html`
             <p style="text-align: center; color: var(--secondary-text-color);">
               No areas found in Home Assistant. Please configure areas first.

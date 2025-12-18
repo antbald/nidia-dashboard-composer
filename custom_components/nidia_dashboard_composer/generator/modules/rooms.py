@@ -309,5 +309,13 @@ def generate_lighting_module_for_all_rooms(rooms: List[Room], config: dict | Non
             all_cards.append(villetta_card)
 
     for room in rooms:
+        # Skip rooms with no entities (lights, covers, climates)
+        lights = get_room_lights(room)
+        covers = get_room_covers(room)
+        climates = get_room_climates(room)
+
+        if not lights and not covers and not climates:
+            continue
+
         all_cards.extend(generate_lighting_module_for_room(room))
     return all_cards

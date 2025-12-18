@@ -20,6 +20,7 @@ export interface HassArea {
     name: string;
     picture: string | null;
     aliases: string[];
+    floor_id: string | null;
 }
 
 export interface HassEntity {
