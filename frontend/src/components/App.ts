@@ -179,11 +179,17 @@ export class NidiaDashboardComposerPanel extends LitElement {
     /* Main Content Styles */
     .main-content {
       flex: 1;
-      overflow-y: auto;
       background: var(--secondary-background-color);
       display: flex;
       flex-direction: column;
+      overflow: hidden; /* Prevent main area from scrolling */
       position: relative;
+    }
+
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
     }
 
     .content-container {
@@ -360,11 +366,7 @@ export class NidiaDashboardComposerPanel extends LitElement {
 
     /* Actions Sticky Bar */
     .floating-actions {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      background: rgba(var(--rgb-card-background-color, 255, 255, 255), 0.8);
+      background: rgba(var(--rgb-card-background-color, 255, 255, 255), 0.9);
       backdrop-filter: blur(12px);
       border-top: 1px solid var(--divider-color);
       padding: 16px 40px;
@@ -372,6 +374,7 @@ export class NidiaDashboardComposerPanel extends LitElement {
       justify-content: flex-end;
       gap: 16px;
       z-index: 85;
+      flex-shrink: 0;
     }
 
     :host([narrow]) .floating-actions {
@@ -614,8 +617,10 @@ export class NidiaDashboardComposerPanel extends LitElement {
         ${this._sidebarOpen ? html`<div class="sidebar-overlay" @click="${() => this._sidebarOpen = false}"></div>` : ''}
 
         <main class="main-content">
-          <div class="content-container">
-            ${this._renderActiveTab()}
+          <div class="scroll-area">
+            <div class="content-container">
+              ${this._renderActiveTab()}
+            </div>
           </div>
 
           <div class="floating-actions">
