@@ -102,7 +102,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
         # Battery overlay image (always visible)
         elements.append({
             "type": "image",
-            "image": "/nidia_dashboard_composer_static/sfondo-villetta-batteria.png",
+            "image": "/nidia_dashboard_composer_static/sfondo-villetta-batt.png",
             "style": {
                 "top": "50%",
                 "left": "50%",
