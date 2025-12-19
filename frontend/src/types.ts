@@ -39,6 +39,10 @@ export interface EnergyVillettaConfig {
     photovoltaic_production_sensor: string | null;
     battery_enabled: boolean;
     battery_sensor: string | null;
+    export_enabled: boolean;
+    export_sensor: string | null;
+    ev_enabled: boolean;
+    ev_sensor: string | null;
 }
 
 export interface ComposerConfig {

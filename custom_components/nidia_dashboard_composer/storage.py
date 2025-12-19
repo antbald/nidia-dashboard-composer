@@ -24,7 +24,11 @@ class ComposerStorage:
                     "photovoltaic_enabled": False,
                     "photovoltaic_production_sensor": None,
                     "battery_enabled": False,
-                    "battery_sensor": None
+                    "battery_sensor": None,
+                    "export_enabled": False,
+                    "export_sensor": None,
+                    "ev_enabled": False,
+                    "ev_sensor": None
                 }
             }
         self._data = data

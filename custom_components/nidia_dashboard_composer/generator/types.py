@@ -12,6 +12,10 @@ class EnergyVillettaConfig(TypedDict, total=False):
     photovoltaic_production_sensor: str | None
     battery_enabled: bool
     battery_sensor: str | None
+    export_enabled: bool
+    export_sensor: str | None
+    ev_enabled: bool
+    ev_sensor: str | None
 
 
 class ComposerConfig(TypedDict, total=False):

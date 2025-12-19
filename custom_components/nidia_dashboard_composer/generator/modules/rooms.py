@@ -171,6 +171,112 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
             "elements": pv_elements
         })
 
+    # Add export conditional elements if enabled
+    export_enabled = villetta_config.get("export_enabled", False)
+    export_sensor = villetta_config.get("export_sensor")
+
+    if export_enabled and export_sensor:
+        # Conditional wrapper with EXACT 3-condition pattern
+        export_elements: List[dict[str, Any]] = [
+            {
+                "type": "image",
+                "image": "/nidia_dashboard_composer_static/sfondo-villetta-export.png",
+                "style": {
+                    "top": "50%",
+                    "left": "50%",
+                    "width": "100%",
+                    "pointer-events": "none",
+                    "z-index": "1"
+                }
+            },
+            {
+                "type": "state-label",
+                "entity": export_sensor,
+                "style": {
+                    "top": "33%",
+                    "left": "7%",
+                    "color": "black",
+                    "font-size": "13px",
+                    "font-weight": "700",
+                    "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                    "z-index": "1"
+                }
+            }
+        ]
+
+        # Wrap in conditional with 3 state_not conditions (EXACT pattern required)
+        elements.append({
+            "type": "conditional",
+            "conditions": [
+                {"entity": export_sensor, "state_not": "0"},
+                {"entity": export_sensor, "state_not": "0 W"},
+                {"entity": export_sensor, "state_not": "0.0"}
+            ],
+            "elements": export_elements
+        })
+
+    # Add EV conditional elements if enabled
+    ev_enabled = villetta_config.get("ev_enabled", False)
+    ev_sensor = villetta_config.get("ev_sensor")
+
+    if ev_enabled and ev_sensor:
+        # Conditional wrapper with EXACT 3-condition pattern
+        ev_elements: List[dict[str, Any]] = [
+            {
+                "type": "image",
+                "image": "/nidia_dashboard_composer_static/sfondo-villetta-auto.png",
+                "style": {
+                    "top": "50%",
+                    "left": "50%",
+                    "width": "100%",
+                    "pointer-events": "none",
+                    "z-index": "1"
+                }
+            },
+            {
+                "type": "state-label",
+                "entity": ev_sensor,
+                "style": {
+                    "top": "72%",
+                    "left": "89%",
+                    "color": "black",
+                    "font-size": "13px",
+                    "font-weight": "700",
+                    "text-shadow": "0 0 2px rgba(255,255,255,.8)",
+                    "z-index": "1"
+                }
+            }
+        ]
+
+        # Wrap in conditional with 3 state_not conditions (EXACT pattern required)
+        elements.append({
+            "type": "conditional",
+            "conditions": [
+                {"entity": ev_sensor, "state_not": "0"},
+                {"entity": ev_sensor, "state_not": "0 W"},
+                {"entity": ev_sensor, "state_not": "0.0"}
+            ],
+            "elements": ev_elements
+        })
+
+    # Add hotspot overlay (ALWAYS VISIBLE when Energy Image is enabled)
+    # This must be the last element (z-index 5) to be on top of everything
+    elements.append({
+        "type": "image",
+        "image": "/nidia_dashboard_composer_static/sfondo-villetta-trasparente.png",
+        "style": {
+            "top": "50%",
+            "left": "50%",
+            "width": "50%",
+            "pointer-events": "auto",
+            "z-index": "5"
+        },
+        "tap_action": {
+            "action": "navigate",
+            "navigation_path": "#energydashboard"
+        }
+    })
+
     return cast(LovelaceCard, {
         "type": "picture-elements",
         "image": "/nidia_dashboard_composer_static/sfondo-villetta.png",

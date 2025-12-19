@@ -10,14 +10,18 @@
             margin: 0;
             padding: 0;
             background-color: #fafafa;
-            font-family: Roboto, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             --primary-color: #03a9f4;
+            --rgb-primary-color: 3, 169, 244;
             --primary-text-color: #212121;
             --secondary-text-color: #757575;
             --primary-background-color: #ffffff;
-            --secondary-background-color: #f5f5f5;
+            --secondary-background-color: #f8f9fa;
             --divider-color: #e0e0e0;
             --card-background-color: #ffffff;
+            --ha-card-background: #ffffff;
+            --ha-card-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: 100vh;
         }
     </style>
 </head>
@@ -28,10 +32,21 @@
 
     <script type="module">
         // Import the compiled module directly
-        import './custom_components/nidia_dashboard_composer/www/nidia-dashboard-composer-panel.js?v=5';
+        import './custom_components/nidia_dashboard_composer/www/nidia-dashboard-composer-panel.js';
 
         // Mock Home Assistant object (hass)
         const mockHass = {
+            states: {
+                'sensor.energy_production': { entity_id: 'sensor.energy_production', attributes: { friendly_name: 'Solar Production' } },
+                'sensor.energy_consumption': { entity_id: 'sensor.energy_consumption', attributes: { friendly_name: 'Home Consumption' } },
+                'sensor.grid_import': { entity_id: 'sensor.grid_import', attributes: { friendly_name: 'Grid Import' } }
+            },
+            areas: {
+                'living_room': { area_id: 'living_room', name: 'Living Room', floor_id: 'Ground Floor' },
+                'kitchen': { area_id: 'kitchen', name: 'Kitchen', floor_id: 'Ground Floor' },
+                'bedroom': { area_id: 'bedroom', name: 'Master Bedroom', floor_id: 'First Floor' },
+                'garage': { area_id: 'garage', name: 'Garage', floor_id: null }
+            },
             // Mock WebSocket calls
             callWS: async (msg) => {
                 console.log('[MockHass] callWS:', msg);
@@ -39,40 +54,38 @@
                 // Mock config response
                 if (msg.type === 'nidia_dashboard_composer/config/get') {
                     return {
-                        areas: ['Living Room', 'Kitchen', 'Bedroom'],
-                        modules: ['home', 'light', 'climate'],
+                        areas: ['living_room', 'kitchen'],
+                        modules: ['home'],
                         theme: 'default',
-                        layout_style: 'standard'
+                        layout_style: 'standard',
+                        energy_villetta: { enabled: true }
                     };
+                }
+
+                if (msg.type === 'nidia_dashboard_composer/config/save') {
+                    return { success: true };
                 }
 
                 // Mock generate response
                 if (msg.type === 'nidia_dashboard_composer/generate') {
                     return {
-                        title: "Generated Dashboard",
+                        title: "Generated Dashboard Preview",
                         views: [{ title: "Home", cards: [] }]
                     };
                 }
 
                 return {};
             },
-            // Mock other properties needed by Lit or HA helpers
             connection: {
                 subscribeMessage: () => Promise.resolve(() => { })
-            },
-            themes: {
-                darkMode: false
             }
         };
 
         // Initialize the panel once defined
         customElements.whenDefined('nidia-dashboard-composer-panel').then(() => {
             const panel = document.getElementById('panel');
-            // Pass the mock hass object to the component
             panel.hass = mockHass;
-            // Simulate narrow mode (mobile) or wide (desktop)
             panel.narrow = false;
-            console.log('Panel initialized with mock hass');
         });
     </script>
 </body>
