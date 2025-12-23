@@ -1,7 +1,7 @@
 import './components/App';
 
 // Version-based cache invalidation
-const CURRENT_VERSION = '0.5.1'; // This will be manually updated with each release
+const CURRENT_VERSION = '0.12.4'; // This will be manually updated with each release
 const VERSION_KEY = 'nidia_dashboard_composer_version';
 
 const storedVersion = localStorage.getItem(VERSION_KEY);
