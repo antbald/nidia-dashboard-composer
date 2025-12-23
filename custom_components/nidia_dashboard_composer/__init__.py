@@ -36,33 +36,32 @@ async def async_setup(hass: HomeAssistant, config: dict):
         _LOGGER.warning("Failed to read version from manifest: %s", e)
         version = "0.0.0"
     
-    # Determine the correct module URL
-    # 1. Check if HACS has installed the file in www/community
-    hacs_path = hass.config.path(f"www/community/{DOMAIN}/nidia-dashboard-composer-panel.js")
+    # Register static path for assets (images, etc.)
+    # Use the absolute path of the current directory to ensure it works regardless of HA config
+    from homeassistant.components.http import StaticPathConfig
     
-    # 2. Check if file exists in custom_components (dev/manual install)
+    current_dir = os.path.dirname(__file__)
+    www_dir = os.path.join(current_dir, "www")
+    
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            url_path=f"/{DOMAIN}_static",
+            path=www_dir,
+            cache_headers=False
+        )
+    ])
+
+    # Determine the correct module URL for the frontend panel
+    hacs_path = hass.config.path(f"www/community/{DOMAIN}/nidia-dashboard-composer-panel.js")
     dev_path = hass.config.path(f"custom_components/{DOMAIN}/www/nidia-dashboard-composer-panel.js")
     
     if os.path.exists(hacs_path):
-        # Use the standard /local path which maps to /config/www
         module_url = f"/local/community/{DOMAIN}/nidia-dashboard-composer-panel.js?v={version}"
         _LOGGER.info("Found frontend file in HACS path: %s", hacs_path)
     elif os.path.exists(dev_path):
-        # Register a custom static path for development/manual install
-        # This requires importing StaticPathConfig
-        from homeassistant.components.http import StaticPathConfig
-        
-        await hass.http.async_register_static_paths([
-            StaticPathConfig(
-                url_path=f"/{DOMAIN}_static",
-                path=hass.config.path(f"custom_components/{DOMAIN}/www"),
-                cache_headers=False
-            )
-        ])
         module_url = f"/{DOMAIN}_static/nidia-dashboard-composer-panel.js?v={version}"
-        _LOGGER.info("Found frontend file in dev path, registered static url: %s", module_url)
+        _LOGGER.info("Found frontend file in dev path, using static url: %s", module_url)
     else:
-        # Fallback to HACS proxy path if file not found (might be cached or not yet copied)
         module_url = f"/hacsfiles/{DOMAIN}/nidia-dashboard-composer-panel.js?v={version}"
         _LOGGER.warning("Frontend file not found in expected locations, falling back to: %s", module_url)
     

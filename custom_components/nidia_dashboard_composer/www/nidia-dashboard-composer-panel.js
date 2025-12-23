@@ -1486,7 +1486,7 @@ v([
 g = v([
   Me("nidia-dashboard-composer-panel")
 ], g);
-const D = "0.12.4", ge = "nidia_dashboard_composer_version", F = localStorage.getItem(ge);
+const D = "0.12.8", ge = "nidia_dashboard_composer_version", F = localStorage.getItem(ge);
 F !== D && (console.log(`Nidia Dashboard Composer: Version changed from ${F} to ${D}, clearing cache...`), localStorage.setItem(ge, D), "caches" in window && caches.keys().then((o) => {
   o.forEach((e) => {
     (e.includes("nidia") || e.includes("dashboard-composer")) && caches.delete(e);
