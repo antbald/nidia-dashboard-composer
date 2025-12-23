@@ -45,11 +45,12 @@ async def async_setup(hass: HomeAssistant, config: dict):
     
     await hass.http.async_register_static_paths([
         StaticPathConfig(
-            url_path=f"/{DOMAIN}_static",
+            url_path="/nidia-assets",
             path=www_dir,
             cache_headers=False
         )
     ])
+    _LOGGER.info("Registered static assets path: /nidia-assets -> %s", www_dir)
 
     # Determine the correct module URL for the frontend panel
     hacs_path = hass.config.path(f"www/community/{DOMAIN}/nidia-dashboard-composer-panel.js")

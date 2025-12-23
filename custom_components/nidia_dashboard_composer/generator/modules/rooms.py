@@ -13,7 +13,7 @@ def generate_branding_card() -> LovelaceCard:
     """Generate the branding logo card that adapts to theme."""
     return cast(LovelaceCard, {
         "type": "picture",
-        "image": "/nidia_dashboard_composer_static/logos/black.png",
+        "image": "/nidia-assets/logos/black.png",
         "tap_action": {
             "action": "none"
         },
@@ -34,13 +34,13 @@ def generate_branding_card() -> LovelaceCard:
                 ha-card img {
                     height: 20px !important;
                     width: auto !important;
-                    content: url("/nidia_dashboard_composer_static/logos/black.png");
+                    content: url("/nidia-assets/logos/black.png");
                     display: block;
                     margin: 0 auto;
                 }
                 @media (prefers-color-scheme: dark) {
                     ha-card img {
-                        content: url("/nidia_dashboard_composer_static/logos/white.png");
+                        content: url("/nidia-assets/logos/white.png");
                     }
                 }
             """
@@ -102,7 +102,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
         # Battery overlay image (always visible)
         elements.append({
             "type": "image",
-            "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta-batt.png",
+            "image": "/nidia-assets/backgrounds/sfondo-villetta-batt.png",
             "style": {
                 "top": "50%",
                 "left": "50%",
@@ -136,7 +136,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
         pv_elements: List[dict[str, Any]] = [
             {
                 "type": "image",
-                "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta-fv.png",
+                "image": "/nidia-assets/backgrounds/sfondo-villetta-fv.png",
                 "style": {
                     "top": "50%",
                     "left": "50%",
@@ -180,7 +180,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
         export_elements: List[dict[str, Any]] = [
             {
                 "type": "image",
-                "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta-export.png",
+                "image": "/nidia-assets/backgrounds/sfondo-villetta-export.png",
                 "style": {
                     "top": "50%",
                     "left": "50%",
@@ -224,7 +224,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
         ev_elements: List[dict[str, Any]] = [
             {
                 "type": "image",
-                "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta-auto.png",
+                "image": "/nidia-assets/backgrounds/sfondo-villetta-auto.png",
                 "style": {
                     "top": "50%",
                     "left": "50%",
@@ -263,7 +263,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
     # This must be the last element (z-index 5) to be on top of everything
     elements.append({
         "type": "image",
-        "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta-trasparente.png",
+        "image": "/nidia-assets/backgrounds/sfondo-villetta-trasparente.png",
         "style": {
             "top": "50%",
             "left": "50%",
@@ -279,7 +279,7 @@ def generate_energy_villetta_card(config: dict) -> LovelaceCard | None:
 
     return cast(LovelaceCard, {
         "type": "picture-elements",
-        "image": "/nidia_dashboard_composer_static/backgrounds/sfondo-villetta.png",
+        "image": "/nidia-assets/backgrounds/sfondo-villetta.png",
         "elements": elements
     })
 

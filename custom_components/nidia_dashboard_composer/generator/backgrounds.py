@@ -12,7 +12,7 @@ BACKGROUNDS = {
     "modern": {
         "name": "Modern",
         "description": "Modern gradient background optimized for smartphone",
-        "config": "center / cover no-repeat fixed linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), center / cover no-repeat fixed url('/nidia_dashboard_composer_static/backgrounds/modern.jpg')"
+        "config": "center / cover no-repeat fixed linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), center / cover no-repeat fixed url('/nidia-assets/backgrounds/modern.jpg')"
     }
 }
 
