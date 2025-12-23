@@ -1,5 +1,12 @@
 # Release Notes
 
+## Version 0.12.10 - Frontend/Assets Fixes (2025-12-23)
+
+### ✅ Fixes
+- Register static path for the panel bundle (`/nidia_dashboard_composer_static`) to prevent frontend load errors
+- Restore Energy Villetta image references to the correct assets under `/nidia-assets/villetta`
+- Add the Villetta image set to the repo for future releases
+
 ## Version 0.7.0 - Device Area Inheritance (2025-12-16)
 
 ### 🚀 Major Feature: Device-to-Entity Area Inheritance

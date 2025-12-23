@@ -36,8 +36,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
         _LOGGER.warning("Failed to read version from manifest: %s", e)
         version = "0.0.0"
     
-    # Register static path for assets (images, etc.)
-    # Use the absolute path of the current directory to ensure it works regardless of HA config
+    # Register static paths for assets and the panel bundle.
+    # Use the absolute path of the current directory to ensure it works regardless of HA config.
     from homeassistant.components.http import StaticPathConfig
     
     current_dir = os.path.dirname(__file__)
@@ -45,12 +45,17 @@ async def async_setup(hass: HomeAssistant, config: dict):
     
     await hass.http.async_register_static_paths([
         StaticPathConfig(
+            url_path=f"/{DOMAIN}_static",
+            path=www_dir,
+            cache_headers=False
+        ),
+        StaticPathConfig(
             url_path="/nidia-assets",
             path=www_dir,
             cache_headers=False
         )
     ])
-    _LOGGER.info("Registered static assets path: /nidia-assets -> %s", www_dir)
+    _LOGGER.info("Registered static paths: /%s_static and /nidia-assets -> %s", DOMAIN, www_dir)
 
     # Determine the correct module URL for the frontend panel
     hacs_path = hass.config.path(f"www/community/{DOMAIN}/nidia-dashboard-composer-panel.js")
